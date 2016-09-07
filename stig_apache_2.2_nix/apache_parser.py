@@ -10,17 +10,11 @@ CONFIG_FILE = "apache2.conf"
  with relevant information such as file and line number"""
 class ApacheParser:
 
-    def __init__(self, server_root=SERVER_ROOT, config_file=SERVER_ROOT):
-        self.server_root = server_root
-        self.config_file = config_file
-        self.directives_list = []
-
-    def change_server_root(self, server_root):
+    def __init__(self, server_root=SERVER_ROOT):
         self.server_root = server_root
 
-    def change_config_file(self, config_file):
-        self.config_file = config_file
-
+    def set_server_root(self, server_root):
+        self.server_root = server_root
 
 
     """ Returns a list of DirectiveInfo objects for all parse_objects 
@@ -37,15 +31,14 @@ class ApacheParser:
             for root, dirs, files, in os.walk(parse_object):
                 for file_object in files:
                     file_path = os.path.join(root, file_object)
-                    directives_list += self.parse_apache_conf(file_path)
+                    directives_list += self.build_directives_list(file_path)
             return directives_list
 
         # Return list of all directives in parse_object and those
         # in files included by parse_objectt
         elif os.path.isfile(parse_object):
-            conf_file = open(parse_object, "r")
 
-            directives_list = self.preprocess_conf(conf_file)
+            directives_list = self.preprocess_conf(parse_object)
 
             for i in range(0, len(directives_list)):
                 directive = directives_list[i].get_directive()
@@ -58,7 +51,7 @@ class ApacheParser:
                     matching_paths = glob.glob(include_abspath)
 
                     for object_path in matching_paths:
-                        directives_list += self.parse_apache_conf(object_path)
+                        directives_list += self.build_directives_list(object_path)
             return directives_list
         else:
             return -1
@@ -66,32 +59,41 @@ class ApacheParser:
 
     """ Parse a configuration file and return all directives in a list
         of directive_info objects"""
-    def preprocess_conf(self, config_file):
+    def preprocess_conf(self, conf_filename):
+        directive_list = self.load_config(conf_filename)
+        directive_list = self.combine_multiline(directive_list) 
+        directive_list = self.tokenize_directives(directive_list, conf_filename)
+        return directive_list
 
-        first_parse = []
-        second_parse = []
-        third_parse = []
+    def load_config(self, conf_filename):
+        conf_file = open(conf_filename, "r")
+        directive_list = []
+        for line in conf_file:
+            directive_list.append(line)
+        conf_file.close()
+        return directive_list
 
-        for line in config_file:
-            first_parse.append(line)
 
-        # Combine all multiline directives
+    def combine_multiline(self, config_list):
+        holder = []
         i = 0
-        while i < len(first_parse):
+        while i < len(config_list):
             next = i + 1
-            line = first_parse[i]
+            line = config_list[i]
             complete_line = line
-            while line[len(line) - 2] == '\\' and next < len(first_parse):
-                line = first_parse[next]
+            while line[len(line) - 2] == '\\' and next < len(config_list):
+                line = config_list[next]
                 complete_line = complete_line[0:len(complete_line) - 2] + line
                 next += 1
-            second_parse.append((complete_line, i))
+            holder.append((complete_line, i))
             i = next
+        return holder
 
-        # Tokenize and append directive information
+    def tokenize_directives(self, config_list, conf_filename):
+        holder = []
         i = 0
-        while i < len(second_parse):
-            directive_info = second_parse[i]
+        while i < len(config_list):
+            directive_info = config_list[i]
             directive = directive_info[0]
             line_num = directive_info[1]
             filtered_directive = directive.replace("\t", " ")
@@ -101,12 +103,10 @@ class ApacheParser:
                 directive = tokens[0]
                 options = tokens[1:len(tokens)]
                 line = DirectiveLine(directive, options)
-                info = DirectiveInfo(line, line_num, config_file.name)
-                third_parse.append(info)
+                info = DirectiveInfo(line, line_num, conf_filename)
+                holder.append(info)
             i += 1
-
-        return third_parse
-
+        return holder
 
 """ Directive info holds directive as well as information useful
     for recomendation reporting such as filenames and line numbers"""
