@@ -1,22 +1,22 @@
-#!/usr/bin/python
+#/usr/bin/python
 
 
 DEFAULT = "/etc/apache2/apache2.conf"
 
-#from apache_auditor import ApacheAuditor
+
 from apache_parser import ApacheParser
+from apache_config_auditor import ApacheConfigAuditor
 
 def main():
     parser = ApacheParser()
 
-    the_list = parser.build_directives_list(DEFAULT)
+    directive_list = parser.build_directives_list(DEFAULT)
 
-    for directive in the_list:
-    	print directive.get_directive()
+    auditor = ApacheConfigAuditor(directive_list)
 
-	
-    #apache_auditor = ApacheAuditor()
-    #apache_auditor.audit_apache()
+    auditor.audit_config()
+    
+    
 	
     return 0
 

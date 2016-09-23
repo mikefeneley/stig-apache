@@ -135,7 +135,7 @@ class DirectiveInfo:
         return self.filename
 
     def status(self):
-        print self.get_directive(), self.get_options(), self.get_line_num(), self.get_filename()
+        print (self.get_directive(), self.get_options(), self.get_line_num(), self.get_filename())
 
 class DirectiveLine:
     def __init__(self, directive, options):

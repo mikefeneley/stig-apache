@@ -1,5 +1,50 @@
-def ssi_disabled(configuration):
-    return 1
+
+class ApacheConfigAuditor:
+    def __init__(self, directive_list = None):
+        self.directive_list = directive_list
+
+    def audit_config(self):
+        self.ssi_disabled()            
+
+    """Check SV-32753r1_rule: Requires server side includes be disabled to 
+    prevent external scripts from being execued.
+
+    Review all uncommented Options statements for the following values:
+         
+    +IncludesNoExec
+    -IncludesNoExec
+    -Includes
+        
+    If these values don’t exist this is a finding.
+         
+    Notes:
+    -If the value does NOT exist, this is a finding.
+    -If all enabled Options statement are set to None this is not a finding.""" 
+    def ssi_disabled(self):
+        option_exists = False
+        ssi_option_disabled = False
+        options_set_none = True 
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "Options":
+                option_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if option != "None":
+                        options_set_none = False
+                    if option == "+IncludesNoExec":
+                        ssi_option_disabled = True    
+                    elif option == "-IncludesNoExec":
+                        ssi_option_disabled = True
+                    elif option == "-Includes":
+                        ssi_option_disabled = True
+        if option_exists and not ssi_option_disabled and not options_set_none:
+            self.ssi_disabled_errmsg() 
+        return 1
+
+    def ssi_disabled_errmsg(self):
+        print("Server side includes not disabled on the server")
+
 
 def server_cleaned():
     return 0
