@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+
+from apache_logger import ApacheLogger
+
 
 class ApacheConfigAuditor:
     def __init__(self, directive_list = None):
         self.directive_list = directive_list
+        self.logger = ApacheLogger() 
 
     def audit_config(self):
         self.ssi_disabled()            
-
+        self.http_header_limited()
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
 
@@ -14,10 +19,9 @@ class ApacheConfigAuditor:
     +IncludesNoExec
     -IncludesNoExec
     -Includes
-        
-    If these values don’t exist this is a finding.
-         
-    Notes:
+    
+    
+    -If these values don’t exist this is a finding.
     -If the value does NOT exist, this is a finding.
     -If all enabled Options statement are set to None this is not a finding.""" 
     def ssi_disabled(self):
@@ -39,24 +43,34 @@ class ApacheConfigAuditor:
                     elif option == "-Includes":
                         ssi_option_disabled = True
         if option_exists and not ssi_option_disabled and not options_set_none:
-            self.ssi_disabled_errmsg() 
-        return 1
+            self.logger.ssi_disabled_errmsg() 
+        return 0 
 
-    def ssi_disabled_errmsg(self):
-        print("Server side includes not disabled on the server")
+
+    def http_header_limited(self):
+        directive_exists = False
+        correct_value = False
+
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "LimitRequestFieldSize":
+                directive_exists = True
+                for option in options:
+                    if option == "8190":
+                        correct_value = True
+        
+        if(not directive_exists or not correct_value):
+            self.logger.http_header_limited_errmsg()
+        return 0
 
 
 def server_cleaned():
     return 0
-
 def software_supported():
     return 0
-
 def access_denied():
     return 0
 
-def http_header_limited():
-    return 0
 
 def http_line_limited():
     return 0
