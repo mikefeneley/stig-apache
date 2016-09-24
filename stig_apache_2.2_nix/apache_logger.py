@@ -11,6 +11,15 @@ class ApacheLogger:
         
     def http_header_limited_errmsg(self):
         self.log.write("HTTP headers not size limited. ")
-        self.log.write("Check SV-32766r2_rule. \n")
+        self.log.write("Check SV-32766r2_rule.\n")
         
+    def http_line_limited_errmsg(self):
+        self.log.write("HTTP lines not size limited. ")
+        self.log.write("Check SV-32768r2_rule.\n")
+
+    def maxclients_set_errmsg(self):
+        self.log.write("Max clients is not set properly." )
+        self.log.write("Check SV-36649r2_rule.\n")
+
+
 

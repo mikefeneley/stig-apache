@@ -11,6 +11,7 @@ class ApacheConfigAuditor:
     def audit_config(self):
         self.ssi_disabled()            
         self.http_header_limited()
+        self.http_line_limited()
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
 
@@ -46,7 +47,6 @@ class ApacheConfigAuditor:
             self.logger.ssi_disabled_errmsg() 
         return 0 
 
-
     def http_header_limited(self):
         directive_exists = False
         correct_value = False
@@ -63,20 +63,37 @@ class ApacheConfigAuditor:
             self.logger.http_header_limited_errmsg()
         return 0
 
+    def http_line_limited(self):
+        directive_exists = False
+        correct_value = False
 
-def server_cleaned():
-    return 0
-def software_supported():
-    return 0
-def access_denied():
-    return 0
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "LimitRequestLine":
+                directive_exists = True
+                for option in options:
+                    if option == "8190":
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.http_line_limited_errmsg()
+        return 0
 
 
-def http_line_limited():
-    return 0
 
-def maxclients_set():
-    return 0
+    def maxclients_set(self):
+        directive_exists = False
+        correct_value = False
+
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "MaxClients":
+                directive_exists = True
+                for option in options:
+                    if(int(option) < 256):
+                        correct_value = True
+        if(directive_exists and not correct_value):
+            print("Wrong maxclients")
+        return 0
 
 def designated_dir_set():
     return 0
