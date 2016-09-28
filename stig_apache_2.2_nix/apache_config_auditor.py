@@ -12,6 +12,7 @@ class ApacheConfigAuditor:
         self.ssi_disabled()            
         self.http_header_limited()
         self.http_line_limited()
+        self.symlinks_disabled()
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
 
@@ -79,7 +80,6 @@ class ApacheConfigAuditor:
         return 0
 
 
-
     def maxclients_set(self):
         directive_exists = False
         correct_value = False
@@ -92,14 +92,34 @@ class ApacheConfigAuditor:
                     if(int(option) < 256):
                         correct_value = True
         if(directive_exists and not correct_value):
-            print("Wrong maxclients")
+           self.logger.maxclients_set_errmsg() 
         return 0
+
+    def symlinks_disabled(self):
+        option_exists = False
+        symlinks_option_disabled = False
+        options_set_none = True
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "Options":
+                option_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if option != "None":
+                        options_set_none = False
+                    if option == "-FollowSymLinks":
+                        symlinks_option_disabled = True
+
+        if(option_exists and not options_set_none and not symlinks_option_disabled):
+           self.logger.symlinks_disabled_errmsg() 
+
+
 
 def designated_dir_set():
     return 0
 
 def symlinks_disabled():
-    return 0
+    return 0 
 
 def multiviews_disabled():
     return 0
