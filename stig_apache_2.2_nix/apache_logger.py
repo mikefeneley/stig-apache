@@ -21,8 +21,10 @@ class ApacheLogger:
         self.log.write("Maxclients directive not set correctly. ")
         self.log.write("\n")
 
-
-
     def symlinks_disabled_errmsg(self):
         self.log.write("Symlinks not disabled. ")
         self.log.write("Check SV-40129r1_rule. \n")
+
+    def multiviews_disabled_errmsg(self):
+        self.log.write("Multiview not disabled. ")
+        self.log.write("\n")
