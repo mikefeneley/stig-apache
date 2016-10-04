@@ -40,3 +40,7 @@ class ApacheLogger:
     def http_header_limited_errmsg(self):
         self.log.write("Http header not limited")
         self.log.write("\n")
+
+    def minspareservers_set(self):        
+        self.log.write("Space servers directive not set properly")
+        self.log.write("\n")

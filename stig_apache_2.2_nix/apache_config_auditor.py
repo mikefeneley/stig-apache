@@ -212,8 +212,23 @@ class ApacheConfigAuditor:
         else:
             finding = False
         return finding
-
-
+    
+    def minspareservers_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+                directive_start = directive.get_directive()
+                if directive_start == "MinSpareServers":
+                    directive_exists = True
+                    for option in options:
+                        if(int(option) >= 5 and int(option) <= 10):
+                            correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.http_header_limited_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
 
 
@@ -256,8 +271,7 @@ def htpassd_valid():
 def no_proxy():
     return 0
 
-def minspareservers_set():
-    return 0
+
 
 def startservers_set():
     return 0
