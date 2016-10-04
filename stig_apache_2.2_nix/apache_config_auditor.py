@@ -154,17 +154,74 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
-       
+  
+    def indexing_disabled(self):
+        option_exists = False
+        indexing_option_disabled = False
+        options_set_none = True
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "Options":
+                option_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if option != "None":
+                        options_set_none = False
+                    if option == "-Indexes":
+                        indexing_option_disabled = True
+
+        if(option_exists and not options_set_none
+                and not indexing_option_disabled):
+            self.logger.indexing_disabled_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
+
+    def http_message_limited(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+                directive_start = directive.get_directive()
+                if directive_start == "LimitRequestBody":
+                    directive_exists = True
+                    for option in options:
+                        if(int(option) >= 1):
+                            correct_value = True
+        if(directive_exists and not correct_value):
+            self.logger.http_message_limited_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
+
+
+    def http_header_limited(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+                directive_start = directive.get_directive()
+                if directive_start == "LimitRequestFields":
+                    directive_exists = True
+                    for option in options:
+                        if(int(option) >= 1):
+                            correct_value = True
+        if(directive_exists and not correct_value):
+            self.logger.http_header_limited_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
+
+
+
 
 
 def designated_dir_set():
     return 0
 
-def indexing_disabled():
-    return 0
 
-def http_message_limited():
-    return 0
+
 
 def access_override_disabled():
     return 0

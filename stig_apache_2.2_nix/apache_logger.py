@@ -28,3 +28,15 @@ class ApacheLogger:
     def multiviews_disabled_errmsg(self):
         self.log.write("Multiview not disabled. ")
         self.log.write("\n")
+    
+    def indexing_disabled_errmsg(self):
+        self.log.write("Indexing not disabled. ")
+        self.log.write("\n")
+
+    def http_message_limited_errmsg(self):
+        self.log.write("Http message not limited")
+        self.log.write("\n")
+
+    def http_header_limited_errmsg(self):
+        self.log.write("Http header not limited")
+        self.log.write("\n")
