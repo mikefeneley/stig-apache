@@ -4,7 +4,7 @@ from apache_logger import ApacheLogger
 
 
 """ ApacheConfigAuditor checks the directive_list for all STIG requirements
-that involve single or multiline directives from the main apache configuration
+that involve single or multiline directives from the main Apache configuration
 file on the server.
 """
 class ApacheConfigAuditor:
@@ -33,6 +33,8 @@ class ApacheConfigAuditor:
 
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
+
+    Finding ID: V-13733 
 
     Review all uncommented Options statements for the following values:
          
@@ -69,6 +71,19 @@ class ApacheConfigAuditor:
             finding = False
         return finding 
 
+
+
+    """Check SV-32766r2_rule: HTTP request header field size must be limited to
+    prevent buffer overflow attacks.
+
+    Finding ID: V-13738 
+
+    Check active configuation file for directive:
+
+    LimitRequestFiledSize
+
+    -If no LimitRequestFieldSize directives exist, this is a Finding. 
+    -If the value of LimitRequestFieldSize is not set to 8190, this is a finding.""" 
     def http_header_limited(self):
         directive_exists = False
         correct_value = False
@@ -88,6 +103,17 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32768r2_rule: HTTP request line must be limited to
+    prevent buffer overflow attacks.
+
+    Finding ID: V-13739 
+
+    Check active configuation file for directive:
+
+    LimitRequestLine
+
+    -If no LimitRequestLine directives exist, this is a Finding. 
+    -If the value of LimitRequestLine is not set to 8190, this is a finding.""" 
     def http_line_limited(self):
         directive_exists = False
         correct_value = False
@@ -106,7 +132,16 @@ class ApacheConfigAuditor:
             finding = False
         return 0
 
+    """Check SV-36649r2_rule: The maximum number of clients for the server
+    must be specified to mitigate ddos attacks.
 
+    Finding ID: V-13730  
+
+    Check active configuation file for directive:
+
+    MaxClients
+
+    -If the value of MaxClients is not less than or equal to 256, this is a finding.""" 
     def maxclients_set(self):
         directive_exists = False
         correct_value = False
@@ -124,7 +159,18 @@ class ApacheConfigAuditor:
         else:
             finding = False
         return finding
+    
+    """Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.
 
+    Finding ID: V-13732  
+
+    Review all uncommented Options statements for the following values:
+         
+    -FollowSymLinks 
+    
+    - If the value does NOT exist, this is a finding.
+    - If all enabled Options statement are set to None this is not a finding.
+    """ 
     def symlinks_disabled(self):
         option_exists = False
         symlinks_option_disabled = False
