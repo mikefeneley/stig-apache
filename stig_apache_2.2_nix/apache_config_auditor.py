@@ -169,8 +169,7 @@ class ApacheConfigAuditor:
     -FollowSymLinks 
     
     - If the value does NOT exist, this is a finding.
-    - If all enabled Options statement are set to None this is not a finding.
-    """ 
+    - If all enabled Options statement are set to None this is not a finding.""" 
     def symlinks_disabled(self):
         option_exists = False
         symlinks_option_disabled = False
@@ -194,6 +193,17 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32754r1_rule: The MultiViews directive must be disabled.
+
+    Finding ID: V-13734 
+
+    Review all uncommented Options statements for the following value: 
+
+    -MultiViews 
+             
+    -If the value is found on the Options statement, and it does not have a preceding ‘-‘, this is a finding. 
+    - If the value does NOT exist, this is a finding.
+    - If all enabled Options statement are set to None this is not a finding."""
     def multiviews_disabled(self):
         option_exists = False
         multiviews_option_disabled = False
@@ -217,7 +227,17 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
-  
+    """Check SV-32755r1_rule: Directory indexing must be disabled on directories not containing index files.
+
+    Finding ID: V-13735 
+
+    Review all uncommented Options statements for the following value: 
+
+    -Indexes  
+             
+    - The value is found on the Options statement, and it does not have a preceding ‘-‘, this is a finding. 
+    - If the value does NOT exist, this is a finding.
+    - If all enabled Options statement are set to None this is not a finding."""
     def indexing_disabled(self):
         option_exists = False
         indexing_option_disabled = False
@@ -241,6 +261,16 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+
+    """Check SV-32756r1_rule: The HTTP request message body size must be limited.
+
+    Finding ID: V-13736
+
+    Check active configuation file for directive:
+
+    LimitRequestBody
+
+    - If the value of LimitRequestBody is not set to 1 or greater or does not exist, this is a finding."""
     def http_message_limited(self):
         directive_exists = False
         correct_value = False
@@ -259,7 +289,15 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32757r1_rule: The HTTP request header fields must be limited.
 
+    Finding ID: V-13737
+
+    Check active configuation file for directive:
+
+    LimitRequestFields
+
+    - If the value of LimitRequestFields is not set to a value greater than 0, this is a finding."""
     def http_header_limited(self):
         directive_exists = False
         correct_value = False
@@ -278,6 +316,19 @@ class ApacheConfigAuditor:
             finding = False
         return finding
     
+
+    """Check SV-36646r2_rule: The httpd.conf MinSpareServers directive must be set properly.
+
+    Finding ID: V-13728 
+
+    Check active configuation file for directive:
+
+    MinSpareServers
+
+    The value needs to be between 5 and 10
+
+    - If the directive is set improperly, this is a finding.
+    - If the directive does not exist, this is NOT a finding because it will default to 5."""
     def minspareservers_set(self):
         directive_exists = False
         correct_value = False
@@ -297,6 +348,18 @@ class ApacheConfigAuditor:
         return finding
 
 
+    """Check SV-36645r2_rule: The httpd.conf StartServers directive must be set properly.
+
+    Finding ID: V-13727
+
+    Check active configuation file for directive:
+
+    StartServers
+
+    The value needs to be between 5 and 10
+
+    - If the directive is set improperly, this is a finding.
+    - If the directive does not exist, this is NOT a finding because it will default to 5."""
     def startservers_set(self):
         directive_exists = False
         correct_value = False
@@ -316,7 +379,18 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32877r1_rule: The KeepAliveTimeout directive must be defined.
 
+    Finding ID: V-13726
+
+    Check active configuation file for directive:
+
+    KeepAliveTimeout
+
+    The value needs to be less than 15
+
+    - If the directive is set improperly, this is a finding.
+    - If the directive does not exist, this is NOT a finding because it will default to 5."""
     def keepalivetimeout_set(self):
         directive_exists = False
         correct_value = False
@@ -335,7 +409,15 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32844r2_rule: The KeepAliveTimeout directive must be defined.
 
+    Finding ID: V-13725
+
+    Check active configuation file for directive:
+
+    KeepAlive
+
+    - Verify the Value of KeepAlive is set to “On” If not, this is a finding."""
     def keepalive_set(self):
         directive_exists = False
         correct_value = False
@@ -354,7 +436,16 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
+    """Check SV-32977r1_rule: The Timeout directive must be properly set.
 
+    Finding ID: V-13724
+
+    Check active configuation file for directive:
+
+    Timeout
+
+    - Verify the value is 300 or less if not, this is a finding.
+    - If the directive does not exist, this is not a finding because it will default to 300"""
     def timeout_set(self):
         directive_exists = False
         correct_value = False
@@ -382,6 +473,16 @@ class ApacheConfigAuditor:
     def ports_configured(self):
         return 0
     
+    """Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
+
+    Finding ID: V-13729
+
+    Check active configuation file for directive:
+
+    MaxSpareServers
+
+    - The value needs to be 10 or less
+    - If the directive is set improperly, this is a finding."""
     def maxspareservers_set(self):
         directive_exists = False
         correct_value = False
