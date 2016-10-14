@@ -41,6 +41,26 @@ class ApacheLogger:
         self.log.write("Http header not limited")
         self.log.write("\n")
 
-    def minspareservers_set(self):        
+    def minspareservers_set_errmsg(self):        
         self.log.write("Space servers directive not set properly")
+        self.log.write("\n")
+
+    def startservers_set_errmsg(self):        
+        self.log.write("StartServers directive not set properly")
+        self.log.write("\n")
+
+    def keepalive_set_errmsg(self):        
+        self.log.write("KeepAlive directive not set properly")
+        self.log.write("\n")
+
+    def keepalivetimeout_set_errmsg(self):        
+        self.log.write("KeepAliveTimeout directive not set properly")
+        self.log.write("\n")
+
+    def timeout_set_errmsg(self):        
+        self.log.write("Timeout directive not set properly")
+        self.log.write("\n")
+
+    def maxspareservers_set_errmsg(self):
+        self.log.write("MaxSpareServers directive not set properly")
         self.log.write("\n")

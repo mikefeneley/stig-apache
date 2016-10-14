@@ -3,6 +3,10 @@
 from apache_logger import ApacheLogger
 
 
+""" ApacheConfigAuditor checks the directive_list for all STIG requirements
+that involve single or multiline directives from the main apache configuration
+file on the server.
+"""
 class ApacheConfigAuditor:
     def __init__(self, directive_list = None):
         self.directive_list = directive_list
@@ -14,6 +18,19 @@ class ApacheConfigAuditor:
         self.http_line_limited()
         self.symlinks_disabled()
         self.multiviews_disabled()
+        self.indexing_disabled()
+        self.http_message_limited()
+        self.http_header_limited()
+        self.minspareservers_set()
+        self.startservers_set()
+        self.keepalivetimeout_set()
+        self.keepalive_set()
+        self.timeout_set()
+        self.root_denied()
+        self.ports_configured()
+        self.maxspareservers_set()
+
+
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
 
@@ -182,12 +199,13 @@ class ApacheConfigAuditor:
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
-                directive_start = directive.get_directive()
-                if directive_start == "LimitRequestBody":
-                    directive_exists = True
-                    for option in options:
-                        if(int(option) >= 1):
-                            correct_value = True
+            directive_start = directive.get_directive()
+            if directive_start == "LimitRequestBody":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(int(option) >= 1):
+                        correct_value = True
         if(directive_exists and not correct_value):
             self.logger.http_message_limited_errmsg() 
             finding = True
@@ -203,6 +221,7 @@ class ApacheConfigAuditor:
                 directive_start = directive.get_directive()
                 if directive_start == "LimitRequestFields":
                     directive_exists = True
+                    options = directive.get_options()
                     for option in options:
                         if(int(option) >= 1):
                             correct_value = True
@@ -217,143 +236,121 @@ class ApacheConfigAuditor:
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
-                directive_start = directive.get_directive()
-                if directive_start == "MinSpareServers":
-                    directive_exists = True
-                    for option in options:
-                        if(int(option) >= 5 and int(option) <= 10):
-                            correct_value = True
+            directive_start = directive.get_directive()
+            if directive_start == "MinSpareServers":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(int(option) >= 5 and int(option) <= 10):
+                        correct_value = True
         if(not directive_exists or not correct_value):
-            self.logger.http_header_limited_errmsg() 
+            self.logger.minspareservers_set_errmsg() 
             finding = True
         else:
             finding = False
         return finding
 
 
+    def startservers_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "StartServers":
+                directive_exists = True
+                options = directive.get_options()
 
-def designated_dir_set():
-    return 0
-
-
-
-
-def access_override_disabled():
-    return 0
-
-def certificated_authorized():
-    return 0
-
-def server_segragated():
-    return 0
-
-def compiler_free():
-    return 0
-
-def sa_enabeld():
-    return 0
-
-def status_mod_disabled():
-    return 0
-
-def server_separated():
-    return 0
-
-def min_perm_set():
-    return 0
-
-def cgi_set():
-    return 0
-
-def htpassd_valid():
-    return 0
-
-def no_proxy():
-    return 0
+                for option in options:
+                    if(int(option) >= 5 and int(option) <= 10):
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.startservers_set_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
 
+    def keepalivetimeout_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "KeepAliveTimeout":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(int(option) <= 15):
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.startservers_set_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
-def startservers_set():
-    return 0
 
-def keepalivetimeout_set():
-    return 0
+    def keepalive_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "KeepAlive":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(option == "On"):
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.startservers_set_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
-def keepalive_set():
-    return 0
 
-def timeout_set():
-    return 0
+    def timeout_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "Timeout":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(int(option) <= 300):
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.timeout_set_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
-def pid_secured():
-    return 0
 
-def email_limited():
-    return 0
+    """ Requires directory processing """
+    def root_denied(self):
+        return 0
 
-def global_dir_disabled():
-    return 0
-
-def software_patched():
-    return 0
-
-def server_isolated():
-    return 0
-
-def mime_disabled():
-    return 0
-
-def ca_process_approved():
-    return 0
-
-def modules_minimized():
-    return 0
-
-def webdav_disabled():
-    return 0
-
-def ciphers_removed():
-    return 0
-
-def tools_restriced():
-    return 0
-
-def root_denied():
-    return 0
-
-def scoreboard_secured():
-    return 0
-
-def dir_index_disabled():
-    return 0
-
-def pathname_set():
-    return 0
-
-def ports_configured():
-    return 0
-
-def trace_disabled():
-    return 0
-
-def root_options_disabled():
-    return 0
-
-def regular_backups_enabled():
-    return 0
-
-def backup_scripts_disabled():
-    return 0
-
-def utility_disabled():
-    return 0
-
-def maxspareservers_set():
-    return 0
-
-def server_info_protected():
-    return 0
-
-def users_documented():
-    return 0
+    """ Requires directory processing """
+    def ports_configured(self):
+        return 0
+    
+    def maxspareservers_set(self):
+        directive_exists = False
+        correct_value = False
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "MaxSpareServers":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if(int(option) <= 15):
+                        correct_value = True
+        if(not directive_exists or not correct_value):
+            self.logger.maxspareservers_set_errmsg() 
+            finding = True
+        else:
+            finding = False
+        return finding
 
