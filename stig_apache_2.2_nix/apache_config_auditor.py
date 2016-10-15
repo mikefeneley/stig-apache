@@ -2,6 +2,11 @@
 
 from apache_logger import ApacheLogger
 
+ROOT = "/"
+START_DIRECTORY = "<Directory"
+END_DIRECTORY = "</Directory>"
+
+
 
 """ ApacheConfigAuditor checks the directive_list for all STIG requirements
 that involve single or multiline directives from the main Apache configuration
@@ -13,6 +18,7 @@ class ApacheConfigAuditor:
         self.logger = ApacheLogger() 
 
     def audit_config(self):
+        
         self.ssi_disabled()            
         self.http_header_limited()
         self.http_line_limited()
@@ -29,7 +35,8 @@ class ApacheConfigAuditor:
         self.root_denied()
         self.ports_configured()
         self.maxspareservers_set()
-
+        
+        self.root_denied()
 
     """Check SV-32753r1_rule: Requires server side includes be disabled to 
     prevent external scripts from being execued.
@@ -464,14 +471,6 @@ class ApacheConfigAuditor:
             finding = False
         return finding
 
-
-    """ Requires directory processing """
-    def root_denied(self):
-        return 0
-
-    """ Requires directory processing """
-    def ports_configured(self):
-        return 0
     
     """Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
 
@@ -500,4 +499,51 @@ class ApacheConfigAuditor:
         else:
             finding = False
         return finding
+
+    """Check SV-33232r1_rule: The ability to override the access configuration for the OS root directory must be disabled.
+
+    Finding ID: V-26393 
+
+    For every root directory entry ensure the following entry exists:
+
+    AllowOverride None
+
+    - If the statement above is not found in the root directory statement, this is a finding. 
+    - If Allow directives are included in the root directory statement, this is a finding."""
+    def root_denied(self):
+        i = 0
+        while i < len(self.directive_list):
+            directive = self.directive_list[i]
+            directive_start = directive.get_directive()
+
+            if(directive_start == "</Directory>"):
+                this, that = self.get_directory_list(i)
+                print(this, that)
+            i += 1
+
+
+    """ Requires directory processing """
+    def ports_configured(self):
+        return 0
+
+
+
+
+
+    def check_start_directory(self, directive_info):
+        directive = directive_info.get_directive()
+        directory_length = len(START_DIRECTORY)
+        if (len(directive) == directory_length and
+                directive[0:directory_length + 1] == START_DIRECTORY):
+            return True
+        else:
+            return False
+
+    def check_end_directory(self, directive_info):
+        directive = directive_info.get_directive()
+        if directive == END_DIRECTORY:
+            return True
+        else:
+            return False
+
 
