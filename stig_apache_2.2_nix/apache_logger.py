@@ -1,5 +1,6 @@
 
 class ApacheLogger:
+
     def __init__(self, filename="ConfigLog.txt"):
         self.filename = filename
         self.log = open(filename, 'w')
@@ -7,12 +8,12 @@ class ApacheLogger:
     def ssi_disabled_errmsg(self):
         pass
         self.log.write("Server side includes not disabled. ")
-        self.log.write("Check SV-32752r1_rule\n") 
-        
+        self.log.write("Check SV-32752r1_rule\n")
+
     def http_header_limited_errmsg(self):
         self.log.write("HTTP headers not size limited. ")
         self.log.write("Check SV-32766r2_rule. \n")
-        
+
     def http_line_limited_errmsg(self):
         self.log.write("HTTP Line LImited not set. ")
         self.log.write("\n")
@@ -28,7 +29,7 @@ class ApacheLogger:
     def multiviews_disabled_errmsg(self):
         self.log.write("Multiview not disabled. ")
         self.log.write("\n")
-    
+
     def indexing_disabled_errmsg(self):
         self.log.write("Indexing not disabled. ")
         self.log.write("\n")
@@ -41,23 +42,23 @@ class ApacheLogger:
         self.log.write("Http header not limited")
         self.log.write("\n")
 
-    def minspareservers_set_errmsg(self):        
+    def minspareservers_set_errmsg(self):
         self.log.write("Space servers directive not set properly")
         self.log.write("\n")
 
-    def startservers_set_errmsg(self):        
+    def startservers_set_errmsg(self):
         self.log.write("StartServers directive not set properly")
         self.log.write("\n")
 
-    def keepalive_set_errmsg(self):        
+    def keepalive_set_errmsg(self):
         self.log.write("KeepAlive directive not set properly")
         self.log.write("\n")
 
-    def keepalivetimeout_set_errmsg(self):        
+    def keepalivetimeout_set_errmsg(self):
         self.log.write("KeepAliveTimeout directive not set properly")
         self.log.write("\n")
 
-    def timeout_set_errmsg(self):        
+    def timeout_set_errmsg(self):
         self.log.write("Timeout directive not set properly")
         self.log.write("\n")
 
