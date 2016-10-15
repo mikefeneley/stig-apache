@@ -19,7 +19,7 @@ class ApacheConfigAuditor:
         self.logger = ApacheLogger()
 
     def audit_config(self):
-
+        """
         self.ssi_disabled()
         self.http_header_limited()
         self.http_line_limited()
@@ -36,6 +36,7 @@ class ApacheConfigAuditor:
         self.root_denied()
         self.ports_configured()
         self.maxspareservers_set()
+        """
 
         self.root_denied()
 
@@ -582,3 +583,6 @@ class ApacheConfigAuditor:
             return True
         else:
             return False
+
+
+

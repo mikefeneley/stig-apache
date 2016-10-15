@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 import subprocess
 import os
+import glob
+import sys
+from subprocess import call
+
+UBUNTU_SEP_TOKEN = "u"
+MISSING_APACHE = "(none)"
+
+REQUIRED_APACHE = "2.2.31"
+
+VERSION_FILENAME = "version.txt"
+SYSTEM_INFOFILE = "/proc/version"
 
 
 class SystemAuditor:
@@ -12,13 +23,129 @@ class SystemAuditor:
     """
 
     def __init__(self):
-        pass
+        self.os = None
+        self.version_sep_token = None
 
     def audit_system(self):
-        self.clean_production_server()
-        self.check_version()
+        self.get_os_info()
+        self.is_supported()
+        # self.is_clean_production_server()
+        # self.is_supported()
+        # self.user_access_restricted()
 
-    def clean_production_server(self):
+    def get_os_info(self):
+        """ Finds which operating system is installed"""
+
+        system_info = open(SYSTEM_INFOFILE, "r")
+        line = system_info.readline()   
+        os_name = line.split()[7]
+        os_name = os_name[1:]
+        self.os = os_name
+
+        if(self.os == "Ubuntu"):
+            self.version_sep_token = UBUNTU_SEP_TOKEN
+        else:
+            self.version_sep_token = None # Only using Ubuntu now
+
+    def is_supported(self):
+        """Check SV-36441r2_rule: Web server software must be a vendor-supported
+        version.
+
+
+        Finding ID: V-2246
+
+        - If the version of Apache is not at the following version or higher,
+        this is a finding.
+        Apache httpd server version 2.2 - Release 2.2.31 (July 2015)
+        CONCERNS: We know the operating system, apt-cache might not be installed.
+                  May need to change approach depending upon the installed OS.
+                  Ditto for checking documention, various config files, etc.
+                  Also, currently only checking if the latest on apt-cache is 
+                  installed, not if a version greater than or equal to required
+        """
+
+        if(self.os == "Ubuntu"):
+            version_info = open(VERSION_FILENAME, "w")
+            call(["apt-cache", "policy", "apache2"], stdout=version_info)
+            version_info.close()
+            version_info = open(VERSION_FILENAME, "r")
+
+            candidate = -1
+            installed = -2
+                    
+            is_installed = False
+            is_latest = False
+            supported = False
+
+            for line in version_info:
+                line_tokens = line.split()
+                if line_tokens[0] == "Installed:":
+                    installed_line = line_tokens[1]
+                elif line_tokens[0] == "Candidate:":
+                    candidate_line = line_tokens[1]
+
+            version_info.close()
+            call(["rm", VERSION_FILENAME])
+
+            """ Return error if apache is not installed on the system """
+            if(installed_line == MISSING_APACHE):
+                print(installed_line)
+                return 0
+            else:
+                print(installed_line)
+            
+
+            if(self.os == "Ubuntu"):
+                installed = installed_line.split(UBUNTU_SEP_TOKEN)[0]
+                candidate = candidate_line.split(UBUNTU_SEP_TOKEN)[0]
+        
+            meets_requirements = self.version_meets_requirements(installed)
+
+            if(not meets_requirements):
+                return 0
+            else:
+                return 1
+
+            """ THIS CODE CHECKS IF THE LATEST VERSION
+                POSSIBLY MOVE THIS SOMWHERE ELSE
+            # WRITE ERROR MESSAGE TO LOG HERE!!!
+            if(installed != candidate):
+                print("Latest version not installed")
+                supported = False
+            else:
+                supported = True
+                print("Latest version is installed")
+            
+            return supported
+            """
+        elif(self.os == "RedHatLinux"): # Todo
+            pass
+
+
+        else: # Check for other OS in the future...
+            pass
+
+    def version_meets_requirements(self, installed_version):
+        """ Check that the installed version is greater than or equal
+        to 2.2.31.
+        """
+
+        components = installed_version.split('.')
+        first = components[0]
+        second = components[1]
+        third = components[2]
+        third = third.split('-')
+        third = third[0]
+
+        if(first != "2"):
+            return 0
+        if(second != "2"):
+            return 0
+        if(int(third) < 31):
+            return 0
+        return 1
+
+    def is_clean_production_server(self):
         """
         Check SV-32933r1_rule: All web server documentation, sample code,
         example applications, and tutorials must be removed from a
@@ -36,6 +163,11 @@ class SystemAuditor:
         self.has_documentation()
         self.has_sample_code()
         self.has_tutorials()
+
+
+
+
+
 
     def has_documentation(self):
         """
@@ -64,18 +196,30 @@ class SystemAuditor:
     def has_tutorials(self):
         pass
 
-    def check_version(self):
-        """Check SV-36441r2_rule: Web server software must be a vendor-supported
-        version.
 
 
-        Finding ID: V-2246
+    def user_access_restricted(self):
+        """Check SV-36456r2_rule: Administrators must be the only users allowed
+        access to the directory tree, the shell, or other operating system
+        functions and utilities.
 
-        - If the version of Apache is not at the following version or higher,
-        this is a finding.
-        Apache httpd server version 2.2 - Release 2.2.31 (July 2015)
+
+        Finding ID: V-2247
+
+        Verify with the system administrator or the ISSO that all
+        privileged accounts are mission essential and documented.
+
+        Verify with the system administrator or the ISSO that all
+        non-administrator access to shell scripts and operating system functions are mission essential and documented.
+
+
+        - If undocumented privileged accounts are found, this is a finding.
+        - If undocumented access to shell scripts or operating system functions is found, this is a finding.
         """
+
         pass
+
+
 
 
 if __name__ == '__main__':
