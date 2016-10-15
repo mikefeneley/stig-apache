@@ -6,9 +6,10 @@ SERVER_ROOT = "/etc/apache2"
 CONFIG_FILE = "apache2.conf"
 
 
-""" ApacheConfParser is used to tokenize config files and couple them
- with relevant information such as file and line number"""
 class ApacheParser:
+
+    """ ApacheConfParser is used to tokenize config files and couple them
+     with relevant information such as file and line number"""
 
     def __init__(self, server_root=SERVER_ROOT):
         self.server_root = server_root
@@ -16,13 +17,13 @@ class ApacheParser:
     def set_server_root(self, server_root):
         self.server_root = server_root
 
-
-    """ Returns a list of DirectiveInfo objects for all parse_objects 
-        contained by parse_object. If parse_object is a file, this 
+    def build_directives_list(self, parse_object):
+        """ Returns a list of DirectiveInfo objects for all parse_objects
+        contained by parse_object. If parse_object is a file, this
         includes all directives in the file and in files included by
         the file. If parse_object is a directory, it includes all the
         directives of files in the directory and its subdirectories"""
-    def build_directives_list(self, parse_object):
+
         directives_list = []
 
         # Return list of directives contained in files located in
@@ -51,18 +52,20 @@ class ApacheParser:
                     matching_paths = glob.glob(include_abspath)
 
                     for object_path in matching_paths:
-                        directives_list += self.build_directives_list(object_path)
+                        directives_list += self.build_directives_list(
+                            object_path)
             return directives_list
         else:
             return -1
 
-
-    """ Parse a configuration file and return all directives in a list
-        of directive_info objects"""
     def preprocess_conf(self, conf_filename):
+        """ Parse a configuration file and return all directives in a list
+        of directive_info objects"""
+
         directive_list = self.load_config(conf_filename)
-        directive_list = self.combine_multiline(directive_list) 
-        directive_list = self.tokenize_directives(directive_list, conf_filename)
+        directive_list = self.combine_multiline(directive_list)
+        directive_list = self.tokenize_directives(
+            directive_list, conf_filename)
         return directive_list
 
     def load_config(self, conf_filename):
@@ -72,7 +75,6 @@ class ApacheParser:
             directive_list.append(line)
         conf_file.close()
         return directive_list
-
 
     def combine_multiline(self, config_list):
         holder = []
@@ -108,9 +110,12 @@ class ApacheParser:
             i += 1
         return holder
 
-""" Directive info holds directive as well as information useful
-    for recomendation reporting such as filenames and line numbers"""
+
 class DirectiveInfo:
+
+    """ Directive info holds directive as well as information useful
+        for recomendation reporting such as filenames and line numbers"""
+
     def __init__(self, directive_line, line_num, filename):
         self.directive_line = directive_line
         self.line_num = line_num
@@ -135,9 +140,15 @@ class DirectiveInfo:
         return self.filename
 
     def status(self):
-        print (self.get_directive(), self.get_options(), self.get_line_num(), self.get_filename())
+        print (
+            self.get_directive(),
+            self.get_options(),
+            self.get_line_num(),
+            self.get_filename())
+
 
 class DirectiveLine:
+
     def __init__(self, directive, options):
         self.directive = directive
         self.options = options
