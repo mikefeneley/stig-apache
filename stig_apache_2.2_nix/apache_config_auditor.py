@@ -76,12 +76,16 @@ class ApacheConfigAuditor:
                         ssi_option_disabled = True
                     elif option == "-Includes":
                         ssi_option_disabled = True
-        if option_exists and not ssi_option_disabled and not options_set_none:
+
+        if options_set_none and option_exists:
+            disabled = True
+        elif ssi_option_disabled:
             self.logger.ssi_disabled_errmsg()
-            finding = True
+            disabled = True
         else:
-            finding = False
-        return finding
+            self.logger.ssi_disabled_errmsg()
+            disabled = False
+        return disabled
 
     def http_header_limited(self):
         """Check SV-32766r2_rule: HTTP request header field size must be limited to
@@ -95,7 +99,7 @@ class ApacheConfigAuditor:
 
         -If no LimitRequestFieldSize directives exist, this is a Finding.
         -If the value of LimitRequestFieldSize is not set to 8190,
-         this is a finding.
+         this is a finding. SOMEHOW THIS IS NOT BEING CALLED CORRECTLY
         """
 
         directive_exists = False
@@ -109,12 +113,12 @@ class ApacheConfigAuditor:
                     if option == "8190":
                         correct_value = True
 
-        if(not directive_exists or not correct_value):
-            self.logger.http_header_limited_errmsg()
-            finding = True
+        if(directive_exists and correct_value):
+            limited = True
         else:
-            finding = False
-        return finding
+            self.logger.http_header_limited_errmsg()
+            limited = False
+        return limited
 
     def http_line_limited(self):
         """Check SV-32768r2_rule: HTTP request line must be limited to
@@ -141,12 +145,12 @@ class ApacheConfigAuditor:
                 for option in options:
                     if option == "8190":
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.http_line_limited_errmsg()
-            finding = True
+        if(directive_exists and correct_value):
+            limited = True
         else:
-            finding = False
-        return 0
+            self.logger.http_line_limited_errmsg()
+            limited = False
+        return limited
 
     def maxclients_set(self):
         """Check SV-36649r2_rule: The maximum number of clients for the server
@@ -159,7 +163,9 @@ class ApacheConfigAuditor:
         MaxClients
 
         - If the value of MaxClients is not less than or equal to 256,
-          this is a finding."""
+          this is a finding.
+        - If the directive does not exist, this is NOT a finding
+          because it will default to 256."""
         directive_exists = False
         correct_value = False
 
@@ -172,10 +178,10 @@ class ApacheConfigAuditor:
                         correct_value = True
         if(directive_exists and not correct_value):
             self.logger.maxclients_set_errmsg()
-            finding = True
+            correct = False
         else:
-            finding = False
-        return finding
+            correct = True
+        return correct
 
     def symlinks_disabled(self):
         """Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.

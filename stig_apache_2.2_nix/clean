@@ -2,3 +2,4 @@ rm -r __pycache__
 rm *.pyc
 rm *.swp
 rm ConfigLog.txt
+rm ./test/ConfigLog.txt
