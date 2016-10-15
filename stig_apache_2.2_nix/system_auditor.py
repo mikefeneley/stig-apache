@@ -70,7 +70,6 @@ class SystemAuditor:
             version_info.close()
             version_info = open(VERSION_FILENAME, "r")
 
-            candidate = -1
             installed = -2
                     
             is_installed = False
@@ -81,24 +80,16 @@ class SystemAuditor:
                 line_tokens = line.split()
                 if line_tokens[0] == "Installed:":
                     installed_line = line_tokens[1]
-                elif line_tokens[0] == "Candidate:":
-                    candidate_line = line_tokens[1]
+
 
             version_info.close()
             call(["rm", VERSION_FILENAME])
 
             """ Return error if apache is not installed on the system """
             if(installed_line == MISSING_APACHE):
-                print(installed_line)
                 return 0
-            else:
-                print(installed_line)
             
-
-            if(self.os == "Ubuntu"):
-                installed = installed_line.split(UBUNTU_SEP_TOKEN)[0]
-                candidate = candidate_line.split(UBUNTU_SEP_TOKEN)[0]
-        
+            installed = installed_line.split(UBUNTU_SEP_TOKEN)[0]
             meets_requirements = self.version_meets_requirements(installed)
 
             if(not meets_requirements):
@@ -106,23 +97,7 @@ class SystemAuditor:
             else:
                 return 1
 
-            """ THIS CODE CHECKS IF THE LATEST VERSION
-                POSSIBLY MOVE THIS SOMWHERE ELSE
-            # WRITE ERROR MESSAGE TO LOG HERE!!!
-            if(installed != candidate):
-                print("Latest version not installed")
-                supported = False
-            else:
-                supported = True
-                print("Latest version is installed")
-            
-            return supported
-            """
         elif(self.os == "RedHatLinux"): # Todo
-            pass
-
-
-        else: # Check for other OS in the future...
             pass
 
     def version_meets_requirements(self, installed_version):
@@ -137,9 +112,11 @@ class SystemAuditor:
         third = third.split('-')
         third = third[0]
 
-        if(first != "2"):
+        print(first, second, third)
+
+        if(int(first) != 2):
             return 0
-        if(second != "2"):
+        if(int(second) != 2):
             return 0
         if(int(third) < 31):
             return 0

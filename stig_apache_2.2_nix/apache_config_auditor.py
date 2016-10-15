@@ -553,29 +553,62 @@ class ApacheConfigAuditor:
           statement, this is a finding.
         - If Allow directives are included in the root directory
           statement, this is a finding.
-        INCOMPELTE!!!"""
+          DO THIS BETTER
+        """
+
+        root_exists = False
+        option_exists = False
+        option_correct = False
+
         i = 0
         while i < len(self.directive_list):
             directive = self.directive_list[i]
             directive_start = directive.get_directive()
 
-            if(directive_start == "</Directory>"):
-                this, that = self.get_directory_list(i)
-                print(this, that)
+            if(directive_start == START_DIRECTORY):
+                tmp = i
+                directory_list = self.get_directory_list(tmp)
+
+                first_directive = directory_list[0]
+                directive_info = first_directive[0]
+                directory = first_directive[1]
+                if(directory == '/'):
+                    for line in directory_list:
+                        directive_info = line[0]
+                        directive = directive_info.get_directive()
+                        options = directive_info.get_options()
+                        print(directive)
+                        if(directive == 'AllowOverride'):
+                            option_exists = True
+                            if(options[0] == "None"):
+                                option_correct = True
             i += 1
+
+        return option_exists and option_correct and root_exists
 
     def ports_configured(self):
         """ Requires directory processing """
         return 0
 
-    def check_start_directory(self, directive_info):
-        directive = directive_info.get_directive()
-        directory_length = len(START_DIRECTORY)
-        if (len(directive) == directory_length and
-                directive[0:directory_length + 1] == START_DIRECTORY):
-            return True
-        else:
-            return False
+
+    def get_directory_list(self, current_index):
+        directory_options = []
+
+        i = current_index + 1
+        directive_info = self.directive_list[current_index]
+        directory = self.get_directory(directive_info)
+        while 1:
+            directive_info = self.directive_list[i]
+            if self.check_end_directory(directive_info):
+                break
+            directory_options.append((directive_info, directory))
+            i += 1
+        return directory_options
+
+    def get_directory(self, directive_info):
+        options = directive_info.get_options()
+        directory = options[0].split(">")
+        return directory[0]
 
     def check_end_directory(self, directive_info):
         directive = directive_info.get_directive()
@@ -583,6 +616,4 @@ class ApacheConfigAuditor:
             return True
         else:
             return False
-
-
 
