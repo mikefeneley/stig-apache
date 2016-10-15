@@ -590,14 +590,13 @@ class ApacheConfigAuditor:
         """ Requires directory processing """
         return 0
 
-
     def get_directory_list(self, current_index):
         directory_options = []
 
         i = current_index + 1
         directive_info = self.directive_list[current_index]
         directory = self.get_directory(directive_info)
-        while 1:
+        while True:
             directive_info = self.directive_list[i]
             if self.check_end_directory(directive_info):
                 break
@@ -616,4 +615,3 @@ class ApacheConfigAuditor:
             return True
         else:
             return False
-

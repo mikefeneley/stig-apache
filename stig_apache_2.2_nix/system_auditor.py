@@ -37,7 +37,7 @@ class SystemAuditor:
         """ Finds which operating system is installed"""
 
         system_info = open(SYSTEM_INFOFILE, "r")
-        line = system_info.readline()   
+        line = system_info.readline()
         os_name = line.split()[7]
         os_name = os_name[1:]
         self.os = os_name
@@ -45,7 +45,7 @@ class SystemAuditor:
         if(self.os == "Ubuntu"):
             self.version_sep_token = UBUNTU_SEP_TOKEN
         else:
-            self.version_sep_token = None # Only using Ubuntu now
+            self.version_sep_token = None  # Only using Ubuntu now
 
     def is_supported(self):
         """Check SV-36441r2_rule: Web server software must be a vendor-supported
@@ -60,7 +60,7 @@ class SystemAuditor:
         CONCERNS: We know the operating system, apt-cache might not be installed.
                   May need to change approach depending upon the installed OS.
                   Ditto for checking documention, various config files, etc.
-                  Also, currently only checking if the latest on apt-cache is 
+                  Also, currently only checking if the latest on apt-cache is
                   installed, not if a version greater than or equal to required
         """
 
@@ -71,7 +71,7 @@ class SystemAuditor:
             version_info = open(VERSION_FILENAME, "r")
 
             installed = -2
-                    
+
             is_installed = False
             is_latest = False
             supported = False
@@ -81,14 +81,13 @@ class SystemAuditor:
                 if line_tokens[0] == "Installed:":
                     installed_line = line_tokens[1]
 
-
             version_info.close()
             call(["rm", VERSION_FILENAME])
 
             """ Return error if apache is not installed on the system """
             if(installed_line == MISSING_APACHE):
                 return 0
-            
+
             installed = installed_line.split(UBUNTU_SEP_TOKEN)[0]
             meets_requirements = self.version_meets_requirements(installed)
 
@@ -97,7 +96,7 @@ class SystemAuditor:
             else:
                 return 1
 
-        elif(self.os == "RedHatLinux"): # Todo
+        elif(self.os == "RedHatLinux"):  # Todo
             pass
 
     def version_meets_requirements(self, installed_version):
@@ -141,11 +140,6 @@ class SystemAuditor:
         self.has_sample_code()
         self.has_tutorials()
 
-
-
-
-
-
     def has_documentation(self):
         """
         Check the default installation location for apache documentation
@@ -173,12 +167,10 @@ class SystemAuditor:
     def has_tutorials(self):
         pass
 
-
-
     def user_access_restricted(self):
-        """Check SV-36456r2_rule: Administrators must be the only users allowed
-        access to the directory tree, the shell, or other operating system
-        functions and utilities.
+        """Check SV-36456r2_rule: Administrators must be the only users
+        allowed access to the directory tree, the shell, or other
+        operating system functions and utilities.
 
 
         Finding ID: V-2247
@@ -187,16 +179,16 @@ class SystemAuditor:
         privileged accounts are mission essential and documented.
 
         Verify with the system administrator or the ISSO that all
-        non-administrator access to shell scripts and operating system functions are mission essential and documented.
+        non-administrator access to shell scripts and operating system
+        functions are mission essential and documented.
 
 
         - If undocumented privileged accounts are found, this is a finding.
-        - If undocumented access to shell scripts or operating system functions is found, this is a finding.
+        - If undocumented access to shell scripts or operating system
+          functions is found, this is a finding.
         """
 
         pass
-
-
 
 
 if __name__ == '__main__':
