@@ -19,10 +19,12 @@ class ApacheConfigAuditor:
         self.logger = ApacheLogger()
 
     def audit_config(self):
-        """
+        
         self.ssi_disabled()
         self.http_header_limited()
         self.http_line_limited()
+        print("End")
+        """
         self.symlinks_disabled()
         self.multiviews_disabled()
         self.indexing_disabled()
@@ -36,10 +38,8 @@ class ApacheConfigAuditor:
         self.root_denied()
         self.ports_configured()
         self.maxspareservers_set()
-        """
-
         self.root_denied()
-
+        """
     def ssi_disabled(self):
         """Check SV-32753r1_rule: Requires server side includes be disabled to
         prevent external scripts from being execued.
@@ -87,7 +87,7 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-    def http_header_limited(self):
+    def http_header_field_limited(self):
         """Check SV-32766r2_rule: HTTP request header field size must be limited to
         prevent buffer overflow attacks.
 
@@ -109,6 +109,7 @@ class ApacheConfigAuditor:
             directive_start = directive.get_directive()
             if directive_start == "LimitRequestFieldSize":
                 directive_exists = True
+                options = directive.get_options()
                 for option in options:
                     if option == "8190":
                         correct_value = True
@@ -119,6 +120,7 @@ class ApacheConfigAuditor:
             self.logger.http_header_limited_errmsg()
             limited = False
         return limited
+
 
     def http_line_limited(self):
         """Check SV-32768r2_rule: HTTP request line must be limited to
@@ -134,7 +136,6 @@ class ApacheConfigAuditor:
         -If the value of LimitRequestLine is not set to 8190,
          this is a finding.
         """
-
         directive_exists = False
         correct_value = False
 
@@ -142,6 +143,7 @@ class ApacheConfigAuditor:
             directive_start = directive.get_directive()
             if directive_start == "LimitRequestLine":
                 directive_exists = True
+                options = directive.get_options()
                 for option in options:
                     if option == "8190":
                         correct_value = True
@@ -173,6 +175,7 @@ class ApacheConfigAuditor:
             directive_start = directive.get_directive()
             if directive_start == "MaxClients":
                 directive_exists = True
+                options = directive.get_options()
                 for option in options:
                     if(int(option) < 256):
                         correct_value = True

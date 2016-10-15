@@ -70,29 +70,53 @@ class TestApacheConfigAuditor(unittest.TestCase):
 		self.assertFalse(auditor.ssi_disabled())
 
 
-	def test_http_header_limited1(self):
+	def test_http_header_field_limited1(self):
 		test_list = []
 
 		auditor = ApacheConfigAuditor(test_list)
-		self.assertFalse(auditor.http_header_limited())
+		self.assertFalse(auditor.http_header_field_limited())
 
-	def test_http_header_limited2(self):
+	def test_http_header_field_limited2(self):
 		test_list = []
 		line = DirectiveInfo(DirectiveLine("LimitRequestFieldSize", ["-1"]), 0, 'file.txt')		
 		test_list.append(line)
 
 		auditor = ApacheConfigAuditor(test_list)
-		self.assertFalse(auditor.http_header_limited())
+		self.assertFalse(auditor.http_header_field_limited())
 
-	def test_http_header_limited3(self):
+	def test_http_header_field_limited3(self):
 		test_list = []
 		line = DirectiveInfo(DirectiveLine("LimitRequestFieldSize", ["8190"]), 0, 'file.txt')		
 		test_list.append(line)
-		auditor = ApacheConfigAuditor(test_list)
-		auditor.http_header_limited()
-
 		
-	"""
+		auditor = ApacheConfigAuditor(test_list)
+		self.assertTrue(auditor.http_header_field_limited())
+
+
+	def test_http_line_limited1(self):
+		test_list = []
+
+		auditor = ApacheConfigAuditor(test_list)
+		self.assertFalse(auditor.http_line_limited())
+
+	def test_http_line_limited2(self):
+		test_list = []
+		line = DirectiveInfo(DirectiveLine("LimitRequestLine", ["-1"]), 0, 'file.txt')		
+		test_list.append(line)
+
+		auditor = ApacheConfigAuditor(test_list)
+		self.assertFalse(auditor.http_header_field_limited())
+
+
+	def test_http_line_limited3(self):
+		test_list = []
+		line = DirectiveInfo(DirectiveLine("LimitRequestLine", ["8190"]), 0, 'file.txt')		
+		test_list.append(line)
+		
+		auditor = ApacheConfigAuditor(test_list)
+		self.assertTrue(auditor.http_line_limited())
+
+
 	def test_maxclients_set1(self):
 		test_list = []
 
@@ -114,6 +138,14 @@ class TestApacheConfigAuditor(unittest.TestCase):
 
 		auditor = ApacheConfigAuditor(test_list)
 		self.assertTrue(auditor.maxclients_set())
-	"""
+
+	def test_symlinks_disabled1(self):
+		test_list = []
+
+		auditor = ApacheConfigAuditor(test_list)
+		self.assertFalse(auditor.symlinks_disabled())
+
+
+	
 if __name__ == '__main__':
     unittest.main()
