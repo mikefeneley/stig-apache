@@ -18,6 +18,7 @@ class ApacheConfigAuditor:
         self.directive_list = directive_list
         self.logger = ApacheLogger()
 
+
     def audit_config(self):
         
         self.ssi_disabled()
@@ -199,6 +200,7 @@ class ApacheConfigAuditor:
         - If all enabled Options statement are set to None
           this is not a finding.
         """
+        
         option_exists = False
         symlinks_option_disabled = False
         options_set_none = True
@@ -213,13 +215,14 @@ class ApacheConfigAuditor:
                     if option == "-FollowSymLinks":
                         symlinks_option_disabled = True
 
-        if(option_exists and not options_set_none
-                and not symlinks_option_disabled):
-            self.logger.symlinks_disabled_errmsg()
-            finding = True
+        if options_set_none and option_exists:
+            disabled = True
+        elif symlinks_option_disabled:
+            disabled = True
         else:
-            finding = False
-        return finding
+            self.logger.ssi_disabled_errmsg()
+            disabled = False
+        return disabled
 
     def multiviews_disabled(self):
         """Check SV-32754r1_rule: The MultiViews directive must be disabled.
@@ -236,7 +239,6 @@ class ApacheConfigAuditor:
         - If all enabled Options statement are set to None
           this is not a finding.
         """
-
         option_exists = False
         multiviews_option_disabled = False
         options_set_none = True
@@ -249,15 +251,16 @@ class ApacheConfigAuditor:
                     if option != "None":
                         options_set_none = False
                     if option == "-Multiview":
-                        multiview_option_disabled = True
+                        multiviews_option_disabled = True
 
-        if(option_exists and not options_set_none
-                and not multiviews_option_disabled):
-            self.logger.multiviews_disabled_errmsg()
-            finding = True
+        if option_exists and options_set_none:
+            disabled = True
+        elif multiviews_option_disabled:
+            disabled = True
         else:
-            finding = False
-        return finding
+            self.logger.multiviews_disabled_errmsg()
+            disabled = False
+        return disabled
 
     def indexing_disabled(self):
         """Check SV-32755r1_rule: Directory indexing must be disabled on
@@ -290,13 +293,14 @@ class ApacheConfigAuditor:
                     if option == "-Indexes":
                         indexing_option_disabled = True
 
-        if(option_exists and not options_set_none
-                and not indexing_option_disabled):
-            self.logger.indexing_disabled_errmsg()
-            finding = True
+        if option_exists and options_set_none:
+            disabled = True
+        elif indexing_option_disabled:
+            disabled = True
         else:
-            finding = False
-        return finding
+            self.logger.indexing_disabled_errmsg()
+            disabled = False
+        return disabled
 
     def http_message_limited(self):
         """Check SV-32756r1_rule: The HTTP request message body size must be limited.
@@ -321,12 +325,12 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) >= 1):
                         correct_value = True
-        if(directive_exists and not correct_value):
-            self.logger.http_message_limited_errmsg()
-            finding = True
+        if(directive_exists and correct_value):
+            limited = True
         else:
-            finding = False
-        return finding
+            self.logger.http_message_limited_errmsg()
+            limited = False
+        return limited
 
     def http_header_limited(self):
         """Check SV-32757r1_rule: The HTTP request header fields must be limited.
@@ -351,12 +355,12 @@ class ApacheConfigAuditor:
                     for option in options:
                         if(int(option) >= 1):
                             correct_value = True
-        if(directive_exists and not correct_value):
-            self.logger.http_header_limited_errmsg()
-            finding = True
+        if(directive_exists and correct_value):
+            limited = True
         else:
-            finding = False
-        return finding
+            self.logger.http_message_limited_errmsg()
+            limited = False
+        return limited
 
     def minspareservers_set(self):
         """Check SV-36646r2_rule: The httpd.conf MinSpareServers
@@ -385,12 +389,12 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) >= 5 and int(option) <= 10):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.minspareservers_set_errmsg()
-            finding = True
+        if(directive_exists and correct_value or not directive_exists):
+            correct = True
         else:
-            finding = False
-        return finding
+            self.logger.minspareservers_set_errmsg()
+            correct = False
+        return correct
 
     def startservers_set(self):
         """Check SV-36645r2_rule: The httpd.conf StartServers
@@ -420,12 +424,12 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) >= 5 and int(option) <= 10):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.startservers_set_errmsg()
-            finding = True
+        if(directive_exists and correct_value or not directive_exists):
+            correct = True
         else:
-            finding = False
-        return finding
+            self.logger.startservers_set_errmsg()
+            correct = False
+        return correct
 
     def keepalivetimeout_set(self):
         """Check SV-32877r1_rule: The KeepAliveTimeout directive must be defined.
