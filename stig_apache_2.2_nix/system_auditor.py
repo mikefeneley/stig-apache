@@ -10,8 +10,11 @@ MISSING_APACHE = "(none)"
 
 REQUIRED_APACHE = "2.2.31"
 
+COMPILER_FILENAME = "compiler.txt"
+COMPILER_RESULT = "compiler_result.txt"
 VERSION_FILENAME = "version.txt"
 SYSTEM_INFOFILE = "/proc/version"
+
 
 
 class SystemAuditor:
@@ -28,10 +31,11 @@ class SystemAuditor:
 
     def audit_system(self):
         self.get_os_info()
-        self.is_supported()
+        #self.is_supported()
         # self.is_clean_production_server()
         # self.is_supported()
         # self.user_access_restricted()
+        self.meets_compiler_restriction()
 
     def get_os_info(self):
         """ Finds which operating system is installed"""
@@ -46,6 +50,8 @@ class SystemAuditor:
             self.version_sep_token = UBUNTU_SEP_TOKEN
         else:
             self.version_sep_token = None  # Only using Ubuntu now
+
+###########################################
 
     def is_supported(self):
         """Check SV-36441r2_rule: Web server software must be a vendor-supported
@@ -86,15 +92,15 @@ class SystemAuditor:
 
             """ Return error if apache is not installed on the system """
             if(installed_line == MISSING_APACHE):
-                return 0
+                return False
 
             installed = installed_line.split(UBUNTU_SEP_TOKEN)[0]
             meets_requirements = self.version_meets_requirements(installed)
 
-            if(not meets_requirements):
-                return 0
+            if(meets_requirements):
+                return True
             else:
-                return 1
+                return False
 
         elif(self.os == "RedHatLinux"):  # Todo
             pass
@@ -114,12 +120,15 @@ class SystemAuditor:
         print(first, second, third)
 
         if(int(first) != 2):
-            return 0
+            return False
         if(int(second) != 2):
-            return 0
+            return False
         if(int(third) < 31):
-            return 0
-        return 1
+            return Falses
+        return True
+
+
+##########################
 
     def is_clean_production_server(self):
         """
@@ -146,7 +155,6 @@ class SystemAuditor:
 
         Currently just checks for the existance of /usr/share/doc/apache2
         """
-        exists = print(os.path.isdir('/usr/share/doc/apache2'))
         exists = os.path.isdir('/usr/share/doc/apache2')
         empty = True
         if(exists):
@@ -159,13 +167,13 @@ class SystemAuditor:
         return documented
 
     def has_sample_code(self):
-        pass
+        return True
 
     def has_example_applications(self):
-        pass
+        return True
 
     def has_tutorials(self):
-        pass
+        return True
 
     def user_access_restricted(self):
         """Check SV-36456r2_rule: Administrators must be the only users
@@ -188,8 +196,79 @@ class SystemAuditor:
           functions is found, this is a finding.
         """
 
-        pass
+        return False
 
+####################################
+
+
+    def meets_compiler_restriction(self):
+        """Check SV-32956r3_rule: Installation of a compiler on 
+        production web server is prohibited.
+
+        
+
+        Finding ID: V-2236  
+
+        Verify that no compilers are installed on the system unless 
+        documented and restricted to administrator use.
+        """
+        exists = self.compiler_exists()
+        approved = self.compiler_allowed()
+
+        if(exists and not approved):
+            meets_restriction = False
+        else:
+            meets_restriction = True
+
+        return meets_restriction
+
+
+    def compiler_exists(self):
+        """Checks the package manager to see if any programs 
+        with keyword 'compiler' are installed on the system.
+        Currently only checks using dpkg. 
+
+        TODO:
+            Add support for Red Hat Linux with yum package manager
+            Use better technique to check for compilers.
+
+        """
+
+        print(self.os)
+        if(self.os == "Ubuntu"):
+            compiler_info = open(COMPILER_FILENAME, "w")
+            p1 = subprocess.Popen(["dpkg", "--list"], stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["grep", "compiler1111"], stdin=p1.stdout, stdout=subprocess.PIPE)
+            p1.stdout.close()
+            output,err = p2.communicate()
+            compiler_info.write(output)
+            compiler_info.close()
+
+            compiler_info = open(COMPILER_FILENAME, "r")
+            for line in compiler_info:
+                if line is not None:
+                    compiler_info.close()
+                    call(["rm", COMPILER_FILENAME])
+                    return True 
+
+            compiler_info.close()
+            call(["rm", COMPILER_FILENAME])
+            return False
+
+        elif(self.os == "RedHatLinux"):  # Todo
+            pass
+
+    def compiler_allowed(self):
+        """Check if compiiler on production server is DOD approved
+        and meets user access restriction requirements.
+        """
+        return False
+
+############################################
+
+
+    def minmium_file_permissions_set(self):
+        return False
 
 if __name__ == '__main__':
     auditor = SystemAuditor()

@@ -81,7 +81,6 @@ class ApacheConfigAuditor:
         if options_set_none and option_exists:
             disabled = True
         elif ssi_option_disabled:
-            self.logger.ssi_disabled_errmsg()
             disabled = True
         else:
             self.logger.ssi_disabled_errmsg()
@@ -180,11 +179,10 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) < 256):
                         correct_value = True
-        if(directive_exists and not correct_value):
-            self.logger.maxclients_set_errmsg()
-            correct = False
-        else:
+        if(correct_value or not directive_exists):
             correct = True
+        else:
+            correct = False
         return correct
 
     def symlinks_disabled(self):
@@ -314,18 +312,15 @@ class ApacheConfigAuditor:
         - If the value of LimitRequestBody is not set to 1 or greater or
           does not exist, this is a finding.
         """
-
-        directive_exists = False
         correct_value = False
         for directive in self.directive_list:
             directive_start = directive.get_directive()
             if directive_start == "LimitRequestBody":
-                directive_exists = True
                 options = directive.get_options()
                 for option in options:
                     if(int(option) >= 1):
                         correct_value = True
-        if(directive_exists and correct_value):
+        if(correct_value):
             limited = True
         else:
             self.logger.http_message_limited_errmsg()
@@ -345,17 +340,15 @@ class ApacheConfigAuditor:
           greater than 0, this is a finding.
         """
 
-        directive_exists = False
         correct_value = False
         for directive in self.directive_list:
                 directive_start = directive.get_directive()
                 if directive_start == "LimitRequestFields":
-                    directive_exists = True
                     options = directive.get_options()
                     for option in options:
                         if(int(option) >= 1):
                             correct_value = True
-        if(directive_exists and correct_value):
+        if(correct_value):
             limited = True
         else:
             self.logger.http_message_limited_errmsg()
@@ -389,7 +382,7 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) >= 5 and int(option) <= 10):
                         correct_value = True
-        if(directive_exists and correct_value or not directive_exists):
+        if(correct_value or not directive_exists):
             correct = True
         else:
             self.logger.minspareservers_set_errmsg()
@@ -424,7 +417,7 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) >= 5 and int(option) <= 10):
                         correct_value = True
-        if(directive_exists and correct_value or not directive_exists):
+        if(correct_value or not directive_exists):
             correct = True
         else:
             self.logger.startservers_set_errmsg()
@@ -440,7 +433,7 @@ class ApacheConfigAuditor:
 
         KeepAliveTimeout
 
-        The value needs to be less than 15
+        The value needs to be less than or equal to 15
 
         - If the directive is set improperly, this is a finding.
         - If the directive does not exist, this is NOT a finding
@@ -457,12 +450,11 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) <= 15):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.startservers_set_errmsg()
-            finding = True
+        if(correct_value or not directive_exists):
+            correct = True
         else:
-            finding = False
-        return finding
+            correct = False
+        return correct
 
     def keepalive_set(self):
         """Check SV-32844r2_rule: The KeepAliveTimeout directive
@@ -477,22 +469,19 @@ class ApacheConfigAuditor:
         - Verify the Value of KeepAlive is set to On, If not, it is a finding
         """
 
-        directive_exists = False
         correct_value = False
         for directive in self.directive_list:
             directive_start = directive.get_directive()
             if directive_start == "KeepAlive":
-                directive_exists = True
                 options = directive.get_options()
                 for option in options:
                     if(option == "On"):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.startservers_set_errmsg()
-            finding = True
+        if(correct_value):
+            correct = True
         else:
-            finding = False
-        return finding
+            correct = False
+        return correct
 
     def timeout_set(self):
         """Check SV-32977r1_rule: The Timeout directive must be properly set.
@@ -517,12 +506,11 @@ class ApacheConfigAuditor:
                 for option in options:
                     if(int(option) <= 300):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.timeout_set_errmsg()
-            finding = True
+        if(correct_value or not directive_exists):
+            correct = True
         else:
-            finding = False
-        return finding
+            correct = False
+        return correct
 
     def maxspareservers_set(self):
         """Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
@@ -543,14 +531,13 @@ class ApacheConfigAuditor:
                 directive_exists = True
                 options = directive.get_options()
                 for option in options:
-                    if(int(option) <= 15):
+                    if(int(option) <= 10):
                         correct_value = True
-        if(not directive_exists or not correct_value):
-            self.logger.maxspareservers_set_errmsg()
-            finding = True
+        if(correct_value or not directive_exists):
+            correct = True
         else:
-            finding = False
-        return finding
+            correct = False
+        return correct
 
     def root_denied(self):
         """Check SV-33232r1_rule: The ability to override the access

@@ -395,7 +395,129 @@ class TestApacheConfigAuditor(unittest.TestCase):
         auditor = ApacheConfigAuditor(test_list)
         self.assertFalse(auditor.startservers_set())
 
+    def test_keepalivetimeout_set1(self):
+        test_list = []
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.keepalivetimeout_set())
 
+    def test_keepalivetimeout_set2(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("KeepAliveTimeout", ["15"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.keepalivetimeout_set())
+
+    def test_keepalivetimeout_set3(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("KeepAliveTimeout", ["14"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.keepalivetimeout_set())\
+
+    def test_keepalivetimeout_set4(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("KeepAliveTimeout", ["16"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.keepalivetimeout_set())
+
+
+    def test_keepalive_set1(self):
+        test_list = []
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.keepalive_set())
+    
+    def test_keepalive_set1(self):
+        test_list = []
+        line = DirectiveInfo(DirectiveLine("KeepAlive", ["On"]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.keepalive_set())
+
+    def test_keepalive_set2(self):
+        test_list = []
+        line = DirectiveInfo(DirectiveLine("KeepAlive", ["Off"]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.keepalive_set())
+
+    def test_timeout_set1(self):
+        test_list = []
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.timeout_set())
+
+    def test_timeout_set2(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("Timeout", ["300"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.timeout_set())
+
+
+    def test_timeout_set3(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("Timeout", ["299"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.timeout_set())
+
+    def test_timeout_set4(self):
+        test_list = []
+
+        line = DirectiveInfo(DirectiveLine("Timeout", ["301"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.timeout_set())
+
+
+    def test_maxspareservers_set1(self):
+        test_list = []
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.maxspareservers_set())
+
+    def test_maxspareservers_set2(self):
+        test_list = []
+        
+        line = DirectiveInfo(DirectiveLine("MaxSpareServers", ["10"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.maxspareservers_set())
+
+    def test_maxspareservers_set3(self):
+        test_list = []
+        
+        line = DirectiveInfo(DirectiveLine("MaxSpareServers", ["11"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.maxspareservers_set())
+
+    def test_maxspareservers_set4(self):
+        test_list = []
+        
+        line = DirectiveInfo(DirectiveLine("MaxSpareServers", ["9"]), 0, 'file.txt')           
+        test_list.append(line)
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.maxspareservers_set())
 
 
 if __name__ == '__main__':
