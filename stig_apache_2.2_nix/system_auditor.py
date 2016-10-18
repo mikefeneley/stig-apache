@@ -237,8 +237,10 @@ class SystemAuditor:
         print(self.os)
         if(self.os == "Ubuntu"):
             compiler_info = open(COMPILER_FILENAME, "w")
-            p1 = subprocess.Popen(["dpkg", "--list"], stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(["grep", "compiler1111"], stdin=p1.stdout, stdout=subprocess.PIPE)
+            p1 = subprocess.Popen(["dpkg", "--list"], 
+                stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["grep", "compiler1111"], 
+                stdin=p1.stdout, stdout=subprocess.PIPE)
             p1.stdout.close()
             output,err = p2.communicate()
             compiler_info.write(output)
@@ -265,10 +267,241 @@ class SystemAuditor:
         return False
 
 ############################################
-
-
     def minmium_file_permissions_set(self):
         return False
+
+
+############################################
+    def cgi_files_monitored(self):
+        """Check SV-32927r2_rule: Monitoring software must include CGI
+        or equivalent programs in its scope.
+
+        Finding ID: V-2236
+
+        CGI or equivalent files must be monitored by a 
+        security tool that reports unauthorized changes.
+
+        Query the system for a tool that monitors CGI files. 
+        Example FileTypes: .cgi, .asp, .aspx, .class, .vb, .php, .pl, and .c
+        """
+
+        return False
+
+############################################
+    def password_file_permissions_set(self):
+        """Check SV-32927r2_rule: The web server’s htpasswd files 
+        (if present) must reflect proper ownership and permissions
+
+        Finding ID: V-2255
+        """
+        return False
+
+############################################
+    def server_not_proxy(self):
+        """Check SV-33220r1_rule: The web server must not be 
+        configured as a proxy server.
+
+        Finding ID: V-26299 
+        """
+
+        return False
+
+############################################
+    def server_segregated(self):
+        """Check SV-32950r1_rule: The web server must be 
+        segregated from other services.
+
+        Finding ID: V-6577
+        """
+        return False
+
+############################################
+    def server_segregated(self):
+        """Check SV-32950r1_rule: The web server must be 
+        segregated from other services.
+
+        Finding ID: V-6577
+        """
+        return False
+
+
+############################################
+    def pid_file_secure(self):
+        """Check SV-33222r1_rule: The process ID (PID) 
+        file must be properly secured.
+
+        Finding ID: V-26305 
+        """
+        return False
+
+############################################
+    def inbound_email_restricted(self):
+        """Check SV-32937r1_rule: A public web server must 
+        limit email to outbound only.
+
+        Finding ID: V-2261
+        """
+        return False
+
+############################################
+    def user_directories_restricted(self):
+        """Check SV-33221r1_rule: User specific directories
+        must not be globally enabled.
+
+        Finding ID: V-26302
+        """
+        return False
+
+############################################
+    def software_updated(self):
+        """Check SV-32969r2_rule: The Web site software used with the 
+        web server must have all applicable security patches 
+        applied and documented.
+
+        Finding ID: V-13613
+        """
+        return False
+
+############################################
+    def server_isolated(self):
+        """Check SV-32932r2_rule: A public web server, if 
+        hosted on the NIPRNet, must be isolated in an accredited 
+        DoD DMZ Extension.
+
+
+        Finding ID: V-2242
+        """
+        return False
+
+############################################
+    def mime_types_disabled(self):
+        """Check SV-36309r2_rule: MIME types for csh or sh 
+        shell programs must be disabled.
+
+        Finding ID: V-2225
+        """
+        return False
+
+############################################
+    def certificates_validated(self):
+        """Check SV-32954r2_rule: The private web server must use an
+        approved DoD certificate validation process.
+
+        Finding ID: V-13672 
+        """
+        return False
+
+############################################
+    def modules_minimized(self):
+        """Check SV-33215r1_rule: Active software modules 
+        must be minimized.
+
+
+        Finding ID: V-26285 
+        """
+        return False
+
+############################################
+    def webdav_disabeld(self):
+        """Check SV-33216r1_rule: Web Distributed Authoring 
+        and Versioning (WebDAV) must be disabled.
+
+
+        Finding ID: V-26287
+        """
+        return False
+
+############################################
+    def export_ciphers_remoevd(self):
+        """Check SV-75159r1_rule: The web server must remove all 
+        export ciphers from the cipher suite.
+
+
+        Finding ID: V-60707 
+        """
+        return False
+
+############################################
+    def admin_tools_restricted(self):
+        """Check SV-32948r2_rule: Web administration tools must be 
+        restricted to the web manager and the web manager’s 
+        designees.
+
+
+        Finding ID: V-2248  
+        """
+        return False
+
+############################################
+    def scoreboard_file_secured(self):
+        """Check SV-33223r1_rule: The score board file must be 
+        properly secured.
+
+
+        Finding ID: V-26322 
+        """
+        return False
+
+############################################
+    def directory_indexing_disabled(self):
+        """Check SV-33219r1_rule: Automatic directory indexing must be 
+        disabled.
+
+
+        Finding ID: V-26368 
+        """
+        return False
+
+############################################
+    def url_pathname_set(self):
+        """Check SV-33229r1_rule: The URL-path name must be set to 
+        the file path name or the directory path name.
+
+        Finding ID: V-26327
+        """
+        return False
+
+############################################
+    def backup_process_set(self):
+        """Check SV-32964r2_rule: Web server content and 
+        configuration files must be part of a routine backup program.
+
+
+        Finding ID: V-6485
+        """
+        return False
+
+############################################
+    def backup_scripts_removed(self):
+        """Check SV-6930r1_rule: Backup interactive scripts
+         on the production web server are prohibited.
+
+
+
+        Finding ID: V-2230
+        """
+        return False
+
+############################################        
+    def utility_programs_removed(self):
+        """Check SV-32955r2_rule: All utility programs, not necessary for 
+        operations, must be removed or disabled.    
+
+
+
+        Finding ID: V-2251
+        """
+        return False
+
+############################################  
+    def utility_programs_removed(self):
+        """Check SV-32951r1_rule: Administrative users and groups 
+        that have access rights to the web server must be documented.
+   
+        Finding ID: V-2257
+        """
+        return False
+
 
 if __name__ == '__main__':
     auditor = SystemAuditor()
