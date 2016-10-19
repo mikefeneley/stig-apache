@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import subprocess
 import os
 import glob
@@ -10,9 +12,10 @@ MISSING_APACHE = "(none)"
 
 REQUIRED_APACHE = "2.2.31"
 
-COMPILER_FILENAME = "compiler.txt"
 COMPILER_RESULT = "compiler_result.txt"
 VERSION_FILENAME = "version.txt"
+COMPILER_FILENAME = "compiler.txt"
+TELNET_FILENAME = "telnet.txt"
 SYSTEM_INFOFILE = "/proc/version"
 
 
@@ -36,7 +39,7 @@ class SystemAuditor:
         # self.is_supported()
         # self.user_access_restricted()
         self.meets_compiler_restriction()
-
+        self.inbound_email_restricted()
     def get_os_info(self):
         """ Finds which operating system is installed"""
 
@@ -341,6 +344,13 @@ class SystemAuditor:
 
         Finding ID: V-2261
         """
+        telnet_info = open(TELNET_FILENAME, "w")
+        code = call(["telnet", "google.com", "25"], stdout=telnet_info)
+        telnet_info.close()
+        print(code)
+        call(["rm", TELNET_FILENAME])
+
+
         return False
 
 ############################################
