@@ -13,6 +13,7 @@ MISSING_APACHE = "(none)"
 
 REQUIRED_APACHE = "2.2.31"
 
+MODULE_FILENAME = "module.txt"
 PASSWORD_FILENAME = "password.txt"
 COMPILER_RESULT = "compiler_result.txt"
 VERSION_FILENAME = "version.txt"
@@ -44,8 +45,7 @@ class SystemAuditor:
         # self.inbound_email_restricted()
 
         self.password_file_permissions_set()
-
-
+        self.webserver_mod_disabled()
     def get_os_info(self):
         """ Finds which operating system is installed"""
 
@@ -295,6 +295,32 @@ class SystemAuditor:
         """
 
         return False
+
+
+############################################
+    def webserver_mod_disabled(self):
+        """Check SV-33218r1_rule: Web server status 
+        module must be disabled.
+
+        Finding ID: V-26294  
+        """
+        module_info = open(MODULE_FILENAME, "w")
+        call(["apachectl", "-M", ], stdout=module_info)
+        module_info.close()
+
+        module_info = open(MODULE_FILENAME, 'r')
+
+        for line in module_info:
+            if("info_module" in line):
+                module_info.close()
+                call(["rm", MODULE_FILENAME])
+                return False
+            if("status_module" in line):
+                module_info.close()
+                call(["rm", MODULE_FILENAME])
+                return False
+        return True
+
 
 ############################################
     def password_file_permissions_set(self):
