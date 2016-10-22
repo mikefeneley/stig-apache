@@ -6,12 +6,14 @@ import os
 import glob
 import sys
 from subprocess import call
+from stat import *
 
 UBUNTU_SEP_TOKEN = "u"
 MISSING_APACHE = "(none)"
 
 REQUIRED_APACHE = "2.2.31"
 
+PASSWORD_FILENAME = "password.txt"
 COMPILER_RESULT = "compiler_result.txt"
 VERSION_FILENAME = "version.txt"
 COMPILER_FILENAME = "compiler.txt"
@@ -39,7 +41,11 @@ class SystemAuditor:
         # self.is_supported()
         # self.user_access_restricted()
         self.meets_compiler_restriction()
-        self.inbound_email_restricted()
+        # self.inbound_email_restricted()
+
+        self.password_file_permissions_set()
+
+
     def get_os_info(self):
         """ Finds which operating system is installed"""
 
@@ -242,7 +248,7 @@ class SystemAuditor:
             compiler_info = open(COMPILER_FILENAME, "w")
             p1 = subprocess.Popen(["dpkg", "--list"], 
                 stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(["grep", "compiler1111"], 
+            p2 = subprocess.Popen(["grep", "compiler"], 
                 stdin=p1.stdout, stdout=subprocess.PIPE)
             p1.stdout.close()
             output,err = p2.communicate()
@@ -297,7 +303,28 @@ class SystemAuditor:
 
         Finding ID: V-2255
         """
-        return False
+
+        password_info = open(PASSWORD_FILENAME, "w")
+        call(["find", "/", "-name", "htpasswd"], stdout=password_info)
+        password_info.close()
+
+        password_info = open(PASSWORD_FILENAME, "r")
+
+        for line in password_info:
+            line = line.strip("\n")
+            permissions = oct(os.stat(line).st_mode & 0777)
+            first = permissions[1]
+            second = permissions[2]
+            third = permissions[3]
+
+            if(first != 5 or second != 5 or third != 7):
+                password_info.close()
+                call(["rm", PASSWORD_FILENAME])
+                return False
+
+        password_info.close()
+        call(["rm", PASSWORD_FILENAME])
+        return True
 
 ############################################
     def server_not_proxy(self):
@@ -342,12 +369,11 @@ class SystemAuditor:
         """Check SV-32937r1_rule: A public web server must 
         limit email to outbound only.
 
-        Finding ID: V-2261
+        Finding ID: V-2261 UNFINSHED
         """
         telnet_info = open(TELNET_FILENAME, "w")
         code = call(["telnet", "google.com", "25"], stdout=telnet_info)
         telnet_info.close()
-        print(code)
         call(["rm", TELNET_FILENAME])
 
 
