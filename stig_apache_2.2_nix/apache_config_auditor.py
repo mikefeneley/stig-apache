@@ -553,8 +553,8 @@ class ApacheConfigAuditor:
                 directive_exists = True
                 options = directive.get_options()
                 for option in options:
-                    address_valid = valid_address_directive(option)
-                    if(not address_valid):
+                    valid_address = is_valid_address(option)
+                    if(not valid_address):
                         return False
 
         if(not directive_exists):
@@ -563,7 +563,7 @@ class ApacheConfigAuditor:
             return True
 
 
-    def valid_address_directive(self, address):
+    def is_valid_address(self, address):
         """ Check for the criteria which would cause the ports/ip 
         configuartion to be a finding. Very rough checking criteria.
         Need better way to verify conditions...
