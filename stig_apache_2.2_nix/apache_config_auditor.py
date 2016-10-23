@@ -43,8 +43,8 @@ class ApacheConfigAuditor:
         self.ports_configured()
         
     def ssi_disabled(self):
-        """Check SV-32753r1_rule: Requires server side includes be disabled to
-        prevent external scripts from being execued.
+        """Check SV-32753r1_rule: Server side includes (SSIs) must run 
+        with execution capability disabled.
 
         Finding ID: V-13733
 
@@ -89,8 +89,8 @@ class ApacheConfigAuditor:
         return disabled
 
     def http_header_field_limited(self):
-        """Check SV-32766r2_rule: HTTP request header field size must be limited to
-        prevent buffer overflow attacks.
+        """Check SV-32766r2_rule: The HTTP request header field size 
+        must be limited.
 
         Finding ID: V-13738
 
@@ -124,8 +124,7 @@ class ApacheConfigAuditor:
 
 
     def http_line_limited(self):
-        """Check SV-32768r2_rule: HTTP request line must be limited to
-        prevent buffer overflow attacks.
+        """Check SV-32768r2_rule: The HTTP request line must be limited.
 
         Finding ID: V-13739
 
@@ -156,8 +155,8 @@ class ApacheConfigAuditor:
         return limited
 
     def maxclients_set(self):
-        """Check SV-36649r2_rule: The maximum number of clients for the server
-        must be specified to mitigate ddos attacks.
+        """Check SV-36649r2_rule: The httpd.conf MaxClients directive 
+        must be set properly.
 
         Finding ID: V-13730
 
@@ -185,6 +184,16 @@ class ApacheConfigAuditor:
         else:
             correct = False
         return correct
+
+
+    def interactive_programs_set(self):
+        """Check SV-32763r1_rule: All interactive programs must be placed 
+        in a designated directory with appropriate permissions.
+
+        Finding ID: V-13731
+        """
+
+
 
     def symlinks_disabled(self):
         """Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.
@@ -355,6 +364,17 @@ class ApacheConfigAuditor:
             self.logger.http_message_limited_errmsg()
             limited = False
         return limited
+
+
+    def request_methods_limited(self):
+        """Check SV-33236r1_rule: HTTP request methods must be limited.
+
+        Finding ID: V-26396
+        """
+        pass    
+
+
+
 
     def minspareservers_set(self):
         """Check SV-36646r2_rule: The httpd.conf MinSpareServers
@@ -592,8 +612,40 @@ class ApacheConfigAuditor:
             return True
 
 
+    def mime_types_disabled(self):
+        """Check SV-36309r2_rule: MIME types for csh or sh shell 
+        programs must be disabled.
+
+
+        Finding ID: V-2225
+        """
+        pass
 
     def root_denied(self):
+        """Check SV-33226r1_rule: The web server must be configured to 
+        explicitly deny access to the OS root.
+
+        Finding ID: V-26323
+        """
+        pass
+
+    def url_name_set(self):
+        """Check SV-33229r1_rule: The web server must be configured to 
+        explicitly deny access to the OS root.
+
+        Finding ID: V-26327
+        """
+        pass
+
+    def trace_disabled(self):
+        """Check SV-33227r1_rule: The TRACE method must be disabled.
+
+        Finding ID: V-26325
+        """
+        pass    
+
+
+    def override_denied(self):
         """Check SV-33232r1_rule: The ability to override the access
         configuration for the OS root directory must be disabled.
 
@@ -685,6 +737,6 @@ if __name__ == "__main__":
 
     auditor = ApacheConfigAuditor(test_list)
 
-    print(auditor.root_denied())
+    print(auditor.override_denied())
 
 

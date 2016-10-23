@@ -579,14 +579,14 @@ class TestApacheConfigAuditor(unittest.TestCase):
         self.assertTrue(auditor.is_valid_address(address12))
 
     
-    def test_root_denied1(self):
+    def test_override_denied1(self):
         test_list = []
 
         auditor = ApacheConfigAuditor(test_list)
-        self.assertFalse(auditor.root_denied())
+        self.assertFalse(auditor.override_denied())
 
 
-    def test_root_denied2(self):
+    def test_override_denied2(self):
         test_list = []
         line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')           
         test_list.append(line)
@@ -596,10 +596,10 @@ class TestApacheConfigAuditor(unittest.TestCase):
         test_list.append(line)
 
         auditor = ApacheConfigAuditor(test_list)
-        self.assertFalse(auditor.root_denied())
+        self.assertFalse(auditor.override_denied())
     
     
-    def test_root_denied3(self):
+    def test_override_denied3(self):
 
         test_list = []
         auditor = ApacheConfigAuditor(test_list)
@@ -613,7 +613,7 @@ class TestApacheConfigAuditor(unittest.TestCase):
 
         auditor = ApacheConfigAuditor(test_list)
 
-        self.assertTrue(auditor.root_denied())
+        self.assertTrue(auditor.override_denied())
     
 
 
