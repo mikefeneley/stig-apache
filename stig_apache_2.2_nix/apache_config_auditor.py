@@ -586,11 +586,14 @@ class ApacheConfigAuditor:
 
 
     def is_valid_address(self, address):
-        """ Check for the criteria which would cause the ports/ip 
-        configuartion to be a finding. Very rough checking criteria.
-        Need better way to verify conditions...
+        """ A valid apache address is one that has both an ip address that is
+        not all zeros and a port number. Function checks if both of these
+        criteria are met.
+
+        :param address: The address to check for criteria
+        :type address: bool 
+        :returns: bool -- True if criteria is met, False otherwise
         """
-        
         if "[" in address: # Ipv6
 
             if "]:" not in address: # Check for port
