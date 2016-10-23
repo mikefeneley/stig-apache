@@ -641,9 +641,25 @@ class ApacheConfigAuditor:
         """Check SV-33227r1_rule: The TRACE method must be disabled.
 
         Finding ID: V-26325
-        """
-        pass    
 
+        Currently not checking the scope
+        """
+        directive_exists = False
+        correct_value = False
+
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "TraceEnable":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    if option == "Off":
+                        correct_value = True
+        if(directive_exists and correct_value):
+            limited = True
+        else:
+            limited = False
+        return limited
 
     def override_denied(self):
         """Check SV-33232r1_rule: The ability to override the access

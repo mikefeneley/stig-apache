@@ -435,14 +435,6 @@ class SystemAuditor:
         """
         return False
 
-############################################
-    def mime_types_disabled(self):
-        """Check SV-36309r2_rule: MIME types for csh or sh 
-        shell programs must be disabled.
-
-        Finding ID: V-2225
-        """
-        return False
 
 ############################################
     def certificates_validated(self):
