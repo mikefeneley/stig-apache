@@ -520,5 +520,102 @@ class TestApacheConfigAuditor(unittest.TestCase):
         self.assertTrue(auditor.maxspareservers_set())
 
 
+    def test_ports_configured1(self):
+        test_list = []
+        
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.ports_configured())
+
+    def test_ports_configured2(self):
+        test_list = []
+        
+
+        line = DirectiveInfo(DirectiveLine("Listen", ["[0:0:0:0:0:0:1]:1"]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertTrue(auditor.ports_configured())
+
+
+    def test_ports_configured3(self):
+        test_list = []
+        
+        line = DirectiveInfo(DirectiveLine("Listen", ["0.0.0.0"]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.ports_configured())
+
+
+    def test_is_valid_address(self):
+        auditor = ApacheConfigAuditor()
+
+        address1 = "0.0.0.0"
+        address2 = "0.0.0.0:0"
+        address3 = "0.0.0.1:0"
+        address4 = "1.1.1.1"
+
+        address5 = "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]"
+        address6 = "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:3"
+
+        address8 = "[0:0:0:0:0:0:0]:1" # How to check.
+        address9 = "[::1]"
+        address10 = "[::]"
+        address11 = "[::]:20"
+        address12 = "[::1]:20"
+
+        self.assertFalse(auditor.is_valid_address(address1))
+        self.assertFalse(auditor.is_valid_address(address2))
+        self.assertTrue(auditor.is_valid_address(address3))
+        self.assertFalse(auditor.is_valid_address(address4))
+
+        self.assertFalse(auditor.is_valid_address(address5))
+        self.assertTrue(auditor.is_valid_address(address6))
+        self.assertFalse(auditor.is_valid_address(address8))
+
+        self.assertFalse(auditor.is_valid_address(address9))
+        self.assertFalse(auditor.is_valid_address(address10))
+        self.assertFalse(auditor.is_valid_address(address11))
+        self.assertTrue(auditor.is_valid_address(address12))
+
+    
+    def test_root_denied1(self):
+        test_list = []
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.root_denied())
+
+
+    def test_root_denied2(self):
+        test_list = []
+        line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')           
+        test_list.append(line)
+        line = DirectiveInfo(DirectiveLine("AllowOverride", ["All"]), 0, 'file.txt')           
+        test_list.append(line)
+        line = DirectiveInfo(DirectiveLine("</Directory>", [""]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+        self.assertFalse(auditor.root_denied())
+    
+    
+    def test_root_denied3(self):
+
+        test_list = []
+        auditor = ApacheConfigAuditor(test_list)
+
+        line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')           
+        test_list.append(line)
+        line = DirectiveInfo(DirectiveLine("AllowOverride", ["None"]), 0, 'file.txt')           
+        test_list.append(line)
+        line = DirectiveInfo(DirectiveLine("</Directory>", [""]), 0, 'file.txt')           
+        test_list.append(line)
+
+        auditor = ApacheConfigAuditor(test_list)
+
+        self.assertTrue(auditor.root_denied())
+    
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from apache_logger import ApacheLogger
+from apache_parser import DirectiveInfo
+from apache_parser import DirectiveLine
 
 ROOT = "/"
 START_DIRECTORY = "<Directory"
@@ -553,7 +555,7 @@ class ApacheConfigAuditor:
                 directive_exists = True
                 options = directive.get_options()
                 for option in options:
-                    valid_address = is_valid_address(option)
+                    valid_address = self.is_valid_address(option)
                     if(not valid_address):
                         return False
 
@@ -568,15 +570,26 @@ class ApacheConfigAuditor:
         configuartion to be a finding. Very rough checking criteria.
         Need better way to verify conditions...
         """
-        valid_address = True
-        if "0.0.0.0" in address:    # Check all zero ip address
-            valid_address = False
-        if("]" in address and "]:" not in address): # ipv6 with no port
-            valid_address = False
-        if("[" not in valid address and ":" not in address): # ipv4 no port
-            valid_address = False
+        
+        if "[" in address: # Ipv6
 
-        return valid_address
+            if "]:" not in address: # Check for port
+                return False
+            start = address.find("[")
+            end = address.find("]")
+            ipv6_address = address[start + 1 : end]
+
+            address_nonzero = False
+            for character in ipv6_address:
+                if(character.isdigit() and character != "0"):
+                    address_nonzero = True
+            return address_nonzero
+        else:  #ipv4
+            if "0.0.0.0" in address:    # Check all zero ipv4 address
+                return False
+            if ":" not in address:
+                return False
+            return True
 
 
 
@@ -614,6 +627,7 @@ class ApacheConfigAuditor:
                 directive_info = first_directive[0]
                 directory = first_directive[1]
                 if(directory == '/'):
+                    root_exists = True
                     for line in directory_list:
                         directive_info = line[0]
                         directive = directive_info.get_directive()
@@ -621,15 +635,19 @@ class ApacheConfigAuditor:
                         print(directive)
                         if(directive == 'AllowOverride'):
                             option_exists = True
+                            print("In here??")
                             if(options[0] == "None"):
                                 option_correct = True
             i += 1
-
         return option_exists and option_correct and root_exists
 
 
 
     def get_directory_list(self, current_index):
+        """ Currently does not work if directive list
+        is empty.
+        """
+
         directory_options = []
 
         i = current_index + 1
@@ -654,4 +672,19 @@ class ApacheConfigAuditor:
             return True
         else:
             return False
+
+if __name__ == "__main__":
+
+    test_list = []
+    line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')           
+    test_list.append(line)
+    line = DirectiveInfo(DirectiveLine("AllowOverride", ["None"]), 0, 'file.txt')           
+    test_list.append(line)
+    line = DirectiveInfo(DirectiveLine("</Directory>", [""]), 0, 'file.txt')           
+    test_list.append(line)
+
+    auditor = ApacheConfigAuditor(test_list)
+
+    print(auditor.root_denied())
+
 
