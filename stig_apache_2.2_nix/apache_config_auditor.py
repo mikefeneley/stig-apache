@@ -59,6 +59,8 @@ class ApacheConfigAuditor:
         -If the value does NOT exist, this is a finding.
         -If all enabled Options statement are set to None this is
          not a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         option_exists = False
@@ -100,7 +102,9 @@ class ApacheConfigAuditor:
 
         -If no LimitRequestFieldSize directives exist, this is a Finding.
         -If the value of LimitRequestFieldSize is not set to 8190,
-         this is a finding. SOMEHOW THIS IS NOT BEING CALLED CORRECTLY
+         this is a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         directive_exists = False
@@ -135,6 +139,8 @@ class ApacheConfigAuditor:
         -If no LimitRequestLine directives exist, this is a Finding.
         -If the value of LimitRequestLine is not set to 8190,
          this is a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         directive_exists = False
         correct_value = False
@@ -167,7 +173,10 @@ class ApacheConfigAuditor:
         - If the value of MaxClients is not less than or equal to 256,
           this is a finding.
         - If the directive does not exist, this is NOT a finding
-          because it will default to 256."""
+          because it will default to 256.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
+        """
         directive_exists = False
         correct_value = False
 
@@ -191,6 +200,9 @@ class ApacheConfigAuditor:
         in a designated directory with appropriate permissions.
 
         Finding ID: V-13731
+
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
 
@@ -207,6 +219,8 @@ class ApacheConfigAuditor:
         - If the value does NOT exist, this is a finding.
         - If all enabled Options statement are set to None
           this is not a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         
         option_exists = False
@@ -246,6 +260,8 @@ class ApacheConfigAuditor:
         - If the value does NOT exist, this is a finding.
         - If all enabled Options statement are set to None
           this is not a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         option_exists = False
         multiviews_option_disabled = False
@@ -285,6 +301,8 @@ class ApacheConfigAuditor:
         - If the value does NOT exist, this is a finding.
         - If all enabled Options statement are set to None
           this is not a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         option_exists = False
@@ -321,6 +339,8 @@ class ApacheConfigAuditor:
 
         - If the value of LimitRequestBody is not set to 1 or greater or
           does not exist, this is a finding.
+        
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         correct_value = False
         for directive in self.directive_list:
@@ -348,6 +368,8 @@ class ApacheConfigAuditor:
 
         - If the value of LimitRequestFields is not set to a value
           greater than 0, this is a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         correct_value = False
@@ -370,6 +392,8 @@ class ApacheConfigAuditor:
         """Check SV-33236r1_rule: HTTP request methods must be limited.
 
         Finding ID: V-26396
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         pass    
 
@@ -391,6 +415,8 @@ class ApacheConfigAuditor:
         - If the directive is set improperly, this is a finding.
         - If the directive does not exist, this is NOT a finding
           because it will default to 5.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         directive_exists = False
@@ -425,6 +451,8 @@ class ApacheConfigAuditor:
         - If the directive is set improperly, this is a finding.
         - If the directive does not exist, this is NOT a finding
           because it will default to 5.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         directive_exists = False
@@ -459,6 +487,8 @@ class ApacheConfigAuditor:
         - If the directive is set improperly, this is a finding.
         - If the directive does not exist, this is NOT a finding
           because it will default to 5.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         directive_exists = False
@@ -488,6 +518,8 @@ class ApacheConfigAuditor:
         KeepAlive
 
         - Verify the Value of KeepAlive is set to On, If not, it is a finding
+        
+        :returns: bool -- True if rule is satisfied, False otherwise        
         """
 
         correct_value = False
@@ -516,6 +548,8 @@ class ApacheConfigAuditor:
         - Verify the value is 300 or less if not, this is a finding.
         - If the directive does not exist, this is not a finding
           because it will default to 300
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         directive_exists = False
         correct_value = False
@@ -543,7 +577,10 @@ class ApacheConfigAuditor:
         MaxSpareServers
 
         - The value needs to be 10 or less
-        - If the directive is set improperly, this is a finding."""
+        - If the directive is set improperly, this is a finding.
+
+        :returns: bool -- True if rule is satisfied, False otherwise
+        """
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
@@ -566,6 +603,8 @@ class ApacheConfigAuditor:
         listen on a specific IP address and port.
 
         Finding ID: V-26326
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         directive_exists = False
 
@@ -621,6 +660,8 @@ class ApacheConfigAuditor:
 
 
         Finding ID: V-2225
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         pass
 
@@ -629,6 +670,8 @@ class ApacheConfigAuditor:
         explicitly deny access to the OS root.
 
         Finding ID: V-26323
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         pass
 
@@ -637,6 +680,8 @@ class ApacheConfigAuditor:
         explicitly deny access to the OS root.
 
         Finding ID: V-26327
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         pass
 
@@ -646,6 +691,8 @@ class ApacheConfigAuditor:
         Finding ID: V-26325
 
         Currently not checking the scope
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
         directive_exists = False
         correct_value = False
@@ -678,7 +725,8 @@ class ApacheConfigAuditor:
           statement, this is a finding.
         - If Allow directives are included in the root directory
           statement, this is a finding.
-          DO THIS BETTER
+
+        :returns: bool -- True if rule is satisfied, False otherwise
         """
 
         root_exists = False
