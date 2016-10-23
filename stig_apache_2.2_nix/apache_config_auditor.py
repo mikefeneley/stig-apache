@@ -20,12 +20,10 @@ class ApacheConfigAuditor:
 
 
     def audit_config(self):
-        
+        """
         self.ssi_disabled()
         self.http_header_limited()
         self.http_line_limited()
-        print("End")
-        """
         self.symlinks_disabled()
         self.multiviews_disabled()
         self.indexing_disabled()
@@ -39,8 +37,9 @@ class ApacheConfigAuditor:
         self.root_denied()
         self.ports_configured()
         self.maxspareservers_set()
-        self.root_denied()
         """
+        self.ports_configured()
+        
     def ssi_disabled(self):
         """Check SV-32753r1_rule: Requires server side includes be disabled to
         prevent external scripts from being execued.
@@ -539,6 +538,48 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
+
+    def ports_configured(self):
+        """Check SV-33228r1_rule: The web server must be configured to
+        listen on a specific IP address and port.
+
+        Finding ID: V-26326
+        """
+        directive_exists = False
+
+        for directive in self.directive_list:
+            directive_start = directive.get_directive()
+            if directive_start == "Listen":
+                directive_exists = True
+                options = directive.get_options()
+                for option in options:
+                    address_valid = valid_address_directive(option)
+                    if(not address_valid):
+                        return False
+
+        if(not directive_exists):
+            return False
+        else:
+            return True
+
+
+    def valid_address_directive(self, address):
+        """ Check for the criteria which would cause the ports/ip 
+        configuartion to be a finding. Very rough checking criteria.
+        Need better way to verify conditions...
+        """
+        valid_address = True
+        if "0.0.0.0" in address:    # Check all zero ip address
+            valid_address = False
+        if("]" in address and "]:" not in address): # ipv6 with no port
+            valid_address = False
+        if("[" not in valid address and ":" not in address): # ipv4 no port
+            valid_address = False
+
+        return valid_address
+
+
+
     def root_denied(self):
         """Check SV-33232r1_rule: The ability to override the access
         configuration for the OS root directory must be disabled.
@@ -586,9 +627,7 @@ class ApacheConfigAuditor:
 
         return option_exists and option_correct and root_exists
 
-    def ports_configured(self):
-        """ Requires directory processing """
-        return 0
+
 
     def get_directory_list(self, current_index):
         directory_options = []
@@ -615,3 +654,4 @@ class ApacheConfigAuditor:
             return True
         else:
             return False
+
