@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*-coding: utf-8 -*-
 
 from apache_config_logger import ApacheConfigLogger
 from apache_parser import DirectiveInfo
@@ -18,29 +18,63 @@ class ApacheConfigAuditor:
 
     def __init__(self, directive_list=None):
         self.directive_list = directive_list
-        self.logger = ApacheConfigLogger()
 
 
     def audit_config(self):
+        """Run checks of the apache configuartion file for compliance and
+        report all misconfiguartions using the ApacheConfigLogger.
         """
-        self.ssi_disabled()
-        self.http_header_limited()
-        self.http_line_limited()
-        self.symlinks_disabled()
-        self.multiviews_disabled()
-        self.indexing_disabled()
-        self.http_message_limited()
-        self.http_header_limited()
-        self.minspareservers_set()
-        self.startservers_set()
-        self.keepalivetimeout_set()
-        self.keepalive_set()
-        self.timeout_set()
-        self.root_denied()
-        self.ports_configured()
-        self.maxspareservers_set()
-        """
-        self.ports_configured()
+        logger = ApacheConfigLogger()
+        result = self.ssi_disabled()
+        logger.ssi_disabled_errmsg(result)     
+        result = self.http_header_field_limited()
+        logger.http_header_field_limited_errmsg(result)
+        result = self.http_line_limited()
+        logger.http_line_limited_errmsg(result)
+        result = self.maxclients_set()
+        logger.maxclients_set_errmsg(result)
+        result = self.interactive_programs_set()
+        logger.interactive_programs_set_errmsg(result)
+        result = self.symlinks_disabled()
+        logger.symlinks_disabled_errmsg(result)
+        result = self.multiviews_disabled()
+        logger.multiviews_disabled_errmsg(result)
+        result = self.indexing_disabled()
+        logger.indexing_disabled_errmsg(result)
+        result = self.http_message_limited()
+        logger.http_message_limited_errmsg(result)
+        result = self.http_header_limited()
+        logger.http_header_limited_errmsg(result)
+        result = self.request_methods_limited()
+        logger.request_methods_limited_errmsg(result)
+        result = self.minspareservers_set()
+        logger.minspareservers_set_errmsg(result)
+        result = self.startservers_set()
+        logger.startservers_set_errmsg(result)
+        result = self.keepalivetimeout_set()
+        logger.keepalivetimeout_set_errmsg(result)
+        result = self.keepalive_set()
+        logger.keepalive_set_errmsg(result)
+        result = self.timeout_set()
+        logger.timeout_set_errmsg(result)
+        result = self.maxspareservers_set()
+        logger.maxspareservers_set_errmsg(result)
+        result = self.ports_configured()
+        logger.ports_configured_errmsg(result)
+        result = self.mime_types_disabled()
+        logger.mime_types_disabled_errmsg(result)
+        result = self.root_denied()
+        logger.root_denied_errmsg(result)
+        result = self.url_name_set()
+        logger.url_name_set_errmsg(result)
+        result = self.trace_disabled()
+        logger.trace_disabled_errmsg(result)
+        result = self.override_denied()
+        logger.override_denied_errmsg(result)
+        result = self.pid_file_secure()
+        logger.pid_file_secure_errmsg(result)
+        del logger
+
         
 #######################################################################
     def ssi_disabled(self):
@@ -87,7 +121,6 @@ class ApacheConfigAuditor:
         elif ssi_option_disabled:
             disabled = True
         else:
-            self.logger.ssi_disabled_errmsg()
             disabled = False
         return disabled
 
@@ -124,7 +157,6 @@ class ApacheConfigAuditor:
         if(directive_exists and correct_value):
             limited = True
         else:
-            self.logger.http_header_limited_errmsg()
             limited = False
         return limited
 
@@ -159,13 +191,12 @@ class ApacheConfigAuditor:
         if(directive_exists and correct_value):
             limited = True
         else:
-            self.logger.http_line_limited_errmsg()
             limited = False
         return limited
 
 ############################################
     def maxclients_set(self):
-        """Check SV-36649r2_rule: The httpd.conf MaxClients directive 
+        """Check SV-36649r2_rule: The MaxClients directive 
         must be set properly.
 
         Finding ID: V-13730
@@ -248,7 +279,6 @@ class ApacheConfigAuditor:
         elif symlinks_option_disabled:
             disabled = True
         else:
-            self.logger.ssi_disabled_errmsg()
             disabled = False
         return disabled
 
@@ -289,7 +319,6 @@ class ApacheConfigAuditor:
         elif multiviews_option_disabled:
             disabled = True
         else:
-            self.logger.multiviews_disabled_errmsg()
             disabled = False
         return disabled
 
@@ -332,7 +361,6 @@ class ApacheConfigAuditor:
         elif indexing_option_disabled:
             disabled = True
         else:
-            self.logger.indexing_disabled_errmsg()
             disabled = False
         return disabled
 
@@ -362,7 +390,6 @@ class ApacheConfigAuditor:
         if(correct_value):
             limited = True
         else:
-            self.logger.http_message_limited_errmsg()
             limited = False
         return limited
 
@@ -393,7 +420,6 @@ class ApacheConfigAuditor:
         if(correct_value):
             limited = True
         else:
-            self.logger.http_message_limited_errmsg()
             limited = False
         return limited
 
@@ -444,7 +470,6 @@ class ApacheConfigAuditor:
         if(correct_value or not directive_exists):
             correct = True
         else:
-            self.logger.minspareservers_set_errmsg()
             correct = False
         return correct
 
@@ -482,7 +507,6 @@ class ApacheConfigAuditor:
         if(correct_value or not directive_exists):
             correct = True
         else:
-            self.logger.startservers_set_errmsg()
             correct = False
         return correct
 
@@ -523,8 +547,7 @@ class ApacheConfigAuditor:
 
 ############################################
     def keepalive_set(self):
-        """Check SV-32844r2_rule: The KeepAliveTimeout directive
-        must be defined.
+        """Check SV-32844r2_rule: The KeepAlive directive must be enabled.
 
         Finding ID: V-13725
 

@@ -1,3 +1,7 @@
+run:
+	python apache_auditor.py
+	cat ApacheConfigLog.txt
+
 clean:
 	-rm -r __pycache__
 	-rm *.pyc
