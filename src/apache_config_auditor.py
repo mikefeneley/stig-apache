@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from apache_logger import ApacheLogger
+from apache_config_logger import ApacheConfigLogger
 from apache_parser import DirectiveInfo
 from apache_parser import DirectiveLine
 
@@ -18,7 +18,7 @@ class ApacheConfigAuditor:
 
     def __init__(self, directive_list=None):
         self.directive_list = directive_list
-        self.logger = ApacheLogger()
+        self.logger = ApacheConfigLogger()
 
 
     def audit_config(self):

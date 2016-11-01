@@ -1,3 +1,3 @@
 coverage run --source ../apache_config_auditor.py test_apache_config_auditor.py 
 coverage html
-rm ConfigLog.txt
+rm ApacheConfigLog.txt

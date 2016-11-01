@@ -1,9 +1,0 @@
-rm -r __pycache__
-rm *.pyc
-rm *.swp
-rm ConfigLog.txt
-rm ./test/ConfigLog.txt
-rm -r ./test/htmlcov
-rm version.txt
-rm telnet.txt
-rm holder.txt

@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-sys.path.append('../')
+sys.path.append('../src')
 
 from apache_config_auditor import ApacheConfigAuditor
 from apache_parser import DirectiveInfo
