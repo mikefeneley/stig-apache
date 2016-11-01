@@ -1,6 +1,5 @@
 #/usr/bin/python
 
-
 DEFAULT = "/etc/apache2/apache2.conf"
 
 
