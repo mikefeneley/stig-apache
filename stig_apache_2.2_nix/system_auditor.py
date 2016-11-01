@@ -20,7 +20,7 @@ VERSION_FILENAME = "version.txt"
 COMPILER_FILENAME = "compiler.txt"
 TELNET_FILENAME = "telnet.txt"
 SYSTEM_INFOFILE = "/proc/version"
-
+HOLDER = "holder.txt"
 
 
 class SystemAuditor:
@@ -41,11 +41,16 @@ class SystemAuditor:
         # self.is_clean_production_server()
         # self.is_supported()
         # self.user_access_restricted()
-        self.meets_compiler_restriction()
+        #self.meets_compiler_restriction()
         # self.inbound_email_restricted()
 
-        self.password_file_permissions_set()
-        self.webserver_mod_disabled()
+        #self.password_file_permissions_set()
+        #self.webserver_mod_disabled()
+        self.user_directories_restricted()
+
+    def __del__(self):
+        call(["rm", HOLDER])
+
     def get_os_info(self):
         """ Finds which operating system is installed"""
 
@@ -207,8 +212,7 @@ class SystemAuditor:
 
         return False
 
-####################################
-
+#######################################################################
 
     def meets_compiler_restriction(self):
         """Check SV-32956r3_rule: Installation of a compiler on 
@@ -338,7 +342,7 @@ class SystemAuditor:
 
         for line in password_info:
             line = line.strip("\n")
-            permissions = oct(os.stat(line).st_mode & 0777)
+            permissions = oct(os.stat(line).st_mode & 0x777)
             first = permissions[1]
             second = permissions[2]
             third = permissions[3]
@@ -381,14 +385,7 @@ class SystemAuditor:
         return False
 
 
-############################################
-    def pid_file_secure(self):
-        """Check SV-33222r1_rule: The process ID (PID) 
-        file must be properly secured.
 
-        Finding ID: V-26305 
-        """
-        return False
 
 ############################################
     def inbound_email_restricted(self):
@@ -412,7 +409,17 @@ class SystemAuditor:
 
         Finding ID: V-26302
         """
-        return False
+        holder = open(HOLDER, "w")
+        call(["apachectl", "-M"], stdout=holder)
+        holder.close()
+        holder = open(HOLDER, "r")
+
+        disabled = True
+        for line in holder:
+            if "userdir_module" in line:
+                disabeld = False
+        holder.close()
+        return disabled
 
 ############################################
     def software_updated(self):
@@ -429,7 +436,6 @@ class SystemAuditor:
         """Check SV-32932r2_rule: A public web server, if 
         hosted on the NIPRNet, must be isolated in an accredited 
         DoD DMZ Extension.
-
 
         Finding ID: V-2242
         """
@@ -450,7 +456,6 @@ class SystemAuditor:
         """Check SV-33215r1_rule: Active software modules 
         must be minimized.
 
-
         Finding ID: V-26285 
         """
         return False
@@ -460,7 +465,6 @@ class SystemAuditor:
         """Check SV-33216r1_rule: Web Distributed Authoring 
         and Versioning (WebDAV) must be disabled.
 
-
         Finding ID: V-26287
         """
         return False
@@ -469,7 +473,6 @@ class SystemAuditor:
     def export_ciphers_remoevd(self):
         """Check SV-75159r1_rule: The web server must remove all 
         export ciphers from the cipher suite.
-
 
         Finding ID: V-60707 
         """
@@ -481,7 +484,6 @@ class SystemAuditor:
         restricted to the web manager and the web manager’s 
         designees.
 
-
         Finding ID: V-2248  
         """
         return False
@@ -490,7 +492,6 @@ class SystemAuditor:
     def scoreboard_file_secured(self):
         """Check SV-33223r1_rule: The score board file must be 
         properly secured.
-
 
         Finding ID: V-26322 
         """
@@ -504,7 +505,17 @@ class SystemAuditor:
 
         Finding ID: V-26368 
         """
-        return False
+        holder = open(HOLDER, "w")
+        call(["apachectl", "-M"], stdout=holder)
+        holder.close()
+        holder.open(HOLDER, 'r')
+
+        disabled = True
+        for line in holder:
+            if "autoindex_module" in line:
+                disabeld = False
+        holder.close()
+        return disabled
 
 ############################################
     def url_pathname_set(self):
@@ -520,7 +531,6 @@ class SystemAuditor:
         """Check SV-32964r2_rule: Web server content and 
         configuration files must be part of a routine backup program.
 
-
         Finding ID: V-6485
         """
         return False
@@ -530,8 +540,6 @@ class SystemAuditor:
         """Check SV-6930r1_rule: Backup interactive scripts
          on the production web server are prohibited.
 
-
-
         Finding ID: V-2230
         """
         return False
@@ -540,8 +548,6 @@ class SystemAuditor:
     def utility_programs_removed(self):
         """Check SV-32955r2_rule: All utility programs, not necessary for 
         operations, must be removed or disabled.    
-
-
 
         Finding ID: V-2251
         """

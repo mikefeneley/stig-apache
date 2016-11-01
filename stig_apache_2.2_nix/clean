@@ -6,3 +6,4 @@ rm ./test/ConfigLog.txt
 rm -r ./test/htmlcov
 rm version.txt
 rm telnet.txt
+rm holder.txt

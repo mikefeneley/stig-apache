@@ -1,9 +1,12 @@
 
 class ApacheLogger:
-
+    
     def __init__(self, filename="ConfigLog.txt"):
         self.filename = filename
         self.log = open(filename, 'w')
+
+    def __del__(self):
+        self.log.close()
 
     def ssi_disabled_errmsg(self):
         pass
