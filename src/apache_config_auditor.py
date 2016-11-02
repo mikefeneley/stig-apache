@@ -20,7 +20,7 @@ class ApacheConfigAuditor:
         self.directive_list = directive_list
 
 
-    def audit_config(self):
+    def audit(self):
         """Run checks of the apache configuartion file for compliance and
         report all misconfiguartions using the ApacheConfigLogger.
         """
@@ -73,8 +73,9 @@ class ApacheConfigAuditor:
         logger.override_denied_errmsg(result)
         result = self.pid_file_secure()
         logger.pid_file_secure_errmsg(result)
+        filename = logger.get_filename()
         del logger
-
+        return filename
         
 #######################################################################
     def ssi_disabled(self):

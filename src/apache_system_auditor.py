@@ -7,6 +7,7 @@ import glob
 import sys
 from subprocess import call
 from stat import *
+from apache_system_logger import ApacheSystemLogger
 
 UBUNTU_SEP_TOKEN = "u"
 MISSING_APACHE = "(none)"
@@ -23,30 +24,78 @@ SYSTEM_INFOFILE = "/proc/version"
 HOLDER = "holder.txt"
 
 
-class SystemAuditor:
+class ApacheSystemAuditor:
 
     """
     System auditor checks all system requirements outside of
     apache config documents to make sure the server is in compliance
     with Apache STIG requirements.
     """
-
     def __init__(self):
         self.os = None
         self.version_sep_token = None
 
-    def audit_system(self):
+    def audit(self):
+        """Run checks system configuartion files and settings for compliance and
+        report all misconfiguartions using the ApacheSystemLogger.
+        """
         self.get_os_info()
-        #self.is_supported()
-        # self.is_clean_production_server()
-        # self.is_supported()
-        # self.user_access_restricted()
-        #self.meets_compiler_restriction()
-        # self.inbound_email_restricted()
 
-        #self.password_file_permissions_set()
-        #self.webserver_mod_disabled()
-        self.user_directories_restricted()
+        logger = ApacheSystemLogger()
+        result = self.is_supported()
+        logger.is_supported_errmsg(result)
+        result = self.is_clean_production_server()
+        logger.is_clean_production_server_errmsg(result)
+        result = self.user_access_restricted()
+        logger.user_access_restricted_errmsg(result)
+        result = self.meets_compiler_restriction()
+        logger.user_access_restricted_errmsg(result)
+        result = self.cgi_files_monitored()
+        logger.cgi_files_monitored_errmsg(result)
+        result = self.webserver_mod_disabled()
+        logger.webserver_mod_disabled_errmsg(result)
+        result = self.password_file_permissions_set()
+        logger.password_file_permissions_set_errmsg(result)
+        result = self.server_not_proxy()
+        logger.server_not_proxy_errmsg(result)
+        result = self.server_segregated()
+        logger.server_segregated_errmsg(result)
+        result = self.inbound_email_restricted()
+        logger.inbound_email_restricted_errmsg(result)
+        result = self.user_directories_restricted()
+        logger.user_directories_restricted_errmsg(result)
+        result = self.software_updated()
+        logger.software_updated_errmsg(result)
+        result = self.server_isolated()
+        logger.server_isolated_errmsg(result)
+        result = self.certificates_validated()
+        logger.certificates_validated_errmsg(result)
+        result = self.modules_minimized()
+        logger.modules_minimized_errmsg(result)
+        result = self.webdav_disabeld()
+        logger.webdav_disabeld_errmsg(result)
+        result = self.export_ciphers_removed()
+        logger.export_ciphers_removed_errmsg(result)
+        result = self.admin_tools_restricted()
+        logger.admin_tools_restricted_errmsg(result)
+        result = self.scoreboard_file_secured()
+        logger.scoreboard_file_secured_errmsg(result)
+        result = self.directory_indexing_disabled()
+        logger.directory_indexing_disabled_errmsg(result)
+        result = self.url_pathname_set()
+        logger.url_pathname_set_errmsg(result)
+        result = self.backup_process_set()
+        logger.backup_process_set_errmsg(result)
+        result = self.backup_scripts_removed()
+        logger.backup_scripts_removed_errmsg(result)
+        result = self.utility_programs_removed()
+        logger.utility_programs_removed_errmsg(result)
+        result = self.users_documented()
+        logger.users_documented_errmsg(result)
+        filename = logger.get_filename()
+        del logger
+
+        return filename
 
     def __del__(self):
         call(["rm", HOLDER])
@@ -289,7 +338,7 @@ class SystemAuditor:
         """Check SV-32927r2_rule: Monitoring software must include CGI
         or equivalent programs in its scope.
 
-        Finding ID: V-2236
+        Finding ID: V-2271
 
         CGI or equivalent files must be monitored by a 
         security tool that reports unauthorized changes.
@@ -356,7 +405,7 @@ class SystemAuditor:
         call(["rm", PASSWORD_FILENAME])
         return True
 
-############################################
+############################################asdasdadsadAAAAAAAÂ
     def server_not_proxy(self):
         """Check SV-33220r1_rule: The web server must not be 
         configured as a proxy server.
@@ -394,10 +443,10 @@ class SystemAuditor:
 
         Finding ID: V-2261 UNFINSHED
         """
-        telnet_info = open(TELNET_FILENAME, "w")
-        code = call(["telnet", "google.com", "25"], stdout=telnet_info)
-        telnet_info.close()
-        call(["rm", TELNET_FILENAME])
+#        telnet_info = open(TELNET_FILENAME, "w")
+#        code = call(["telnet", "google.com", "25"], stdout=telnet_info)
+#        telnet_info.close()
+#        call(["rm", TELNET_FILENAME])
 
 
         return False
@@ -470,7 +519,7 @@ class SystemAuditor:
         return False
 
 ############################################
-    def export_ciphers_remoevd(self):
+    def export_ciphers_removed(self):
         """Check SV-75159r1_rule: The web server must remove all 
         export ciphers from the cipher suite.
 
@@ -508,7 +557,7 @@ class SystemAuditor:
         holder = open(HOLDER, "w")
         call(["apachectl", "-M"], stdout=holder)
         holder.close()
-        holder.open(HOLDER, 'r')
+        holder = open(HOLDER, 'r')
 
         disabled = True
         for line in holder:
@@ -554,7 +603,7 @@ class SystemAuditor:
         return False
 
 ############################################  
-    def utility_programs_removed(self):
+    def users_documented(self):
         """Check SV-32951r1_rule: Administrative users and groups 
         that have access rights to the web server must be documented.
    
@@ -564,5 +613,5 @@ class SystemAuditor:
 
 
 if __name__ == '__main__':
-    auditor = SystemAuditor()
-    auditor.audit_system()
+    auditor = ApacheSystemAuditor()
+    auditor.audit()

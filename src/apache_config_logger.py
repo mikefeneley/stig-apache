@@ -12,6 +12,9 @@ class ApacheConfigLogger:
         self.log.write("#########################\n\n")
         self.log.close()
 
+    def get_filename(self):
+        return self.filename
+
     def ssi_disabled_errmsg(self, result):
         if result == 0:
             self.log.write("Check SV-43621r1_rule: ")
@@ -104,69 +107,79 @@ class ApacheConfigLogger:
             self.log.write("Set the directive StartServers to a value of between 5 and 10, add the directive if it does not exist.\n\n\n")
 
     def keepalivetimeout_set_errmsg(self, result):
-         if result == 0:
+        if result == 0:
             self.log.write("SV-32877r1_rule: ")
             self.log.write("The KeepAliveTimeout directive must be defined.\n\n")
             self.log.write("To fix: ")
             self.log.write("Set the directive KeepAliveTimeout to a value of less than or equal to 15. Add the directive if it does not exist.\n\n\n")
 
     def keepalive_set_errmsg(self, result):
-         if result == 0:
+        if result == 0:
             self.log.write("SV-32844r2_rule: ")
             self.log.write("The KeepAliveTimeout directive must be enabled.\n\n")
             self.log.write("To fix: ")
             self.log.write("Edit the httpd.conf file and set the value of KeepAlive to On\n\n\n")
 
     def timeout_set_errmsg(self, result):
-        self.log.write("SV-32977r1_rule: ")
-        self.log.write("Timeout directive not set properly\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and set the value of Timeout to 300 seconds or less.\n\n\n")
+        if result == 0:
+            self.log.write("SV-32977r1_rule: ")
+            self.log.write("Timeout directive not set properly\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and set the value of Timeout to 300 seconds or less.\n\n\n")
 
     def maxspareservers_set_errmsg(self, result):
-        self.log.write("SV-36648r2_rule: ")
-        self.log.write("The MaxSpareServers directive must be set properly.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Set the directive to a value of 10 or less, add the directive if it does not exist.\n\n\n")
+        if result == 0:
+            self.log.write("SV-36648r2_rule: ")
+            self.log.write("The MaxSpareServers directive must be set properly.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Set the directive to a value of 10 or less, add the directive if it does not exist.\n\n\n")
 
     def ports_configured_errmsg(self, result):
-        self.log.write("SV-33228r1_rule: ")
-        self.log.write("The web server must be configured to listen on a specific IP address and port.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and set the Listen directive to listen on a specific IP address and port.\n\n\n")
+        if result == 0:
+            self.log.write("SV-33228r1_rule: ")
+            self.log.write("The web server must be configured to listen on a specific IP address and port.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and set the Listen directive to listen on a specific IP address and port.\n\n\n")
 
     def mime_types_disabled_errmsg(self, result):
-        self.log.write("SV-36309r2_rule: ")
-        self.log.write("MIME types for csh or sh shell programs must be disabled.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Disable MIME types for csh or sh shell programs.\n\n\n")       
+        if result == 0:
+            self.log.write("SV-36309r2_rule: ")
+            self.log.write("MIME types for csh or sh shell programs must be disabled.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Disable MIME types for csh or sh shell programs.\n\n\n")       
 
     def root_denied_errmsg(self, result):
-        self.log.write("SV-33226r1_rule: ")
-        self.log.write("The web server must be configured to explicitly deny access to the OS root.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and set the root directory directive as follows: Directory Order deny,allow Deny from all\n\n\n")   
+        if result == 0:
+            self.log.write("SV-33226r1_rule: ")
+            self.log.write("The web server must be configured to explicitly deny access to the OS root.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and set the root directory directive as follows: Directory Order deny,allow Deny from all\n\n\n")   
 
     def url_name_set_errmsg(self, result):
-        self.log.write("SV-33229r1_rule: ")
-        self.log.write("The web server must be configured to explicitly deny access to the OS root.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and set the ScriptAlias URL-path and file-path or directory-path entries.\n\n\n")   
+        if result == 0:
+
+            self.log.write("SV-33229r1_rule: ")
+            self.log.write("The web server must be configured to explicitly deny access to the OS root.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and set the ScriptAlias URL-path and file-path or directory-path entries.\n\n\n")   
 
     def trace_disabled_errmsg(self, result):
-        self.log.write("SV-33227r1_rule: ")
-        self.log.write("The TRACE method must be disabled.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and add or set the value of EnableTrace to Off.\n\n")   
+        if result == 0:
+            self.log.write("SV-33227r1_rule: ")
+            self.log.write("The TRACE method must be disabled.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and add or set the value of EnableTrace to Off.\n\n")   
 
     def override_denied_errmsg(self, result):
-        self.log.write("SV-33232r1_rule: ")
-        self.log.write("The ability to override the access configuration for the OS root directory must be disabled.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Edit the httpd.conf file and add or set the value of AllowOverride to None.\n\n")
+        if result == 0:
+            self.log.write("SV-33232r1_rule: ")
+            self.log.write("The ability to override the access configuration for the OS root directory must be disabled.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Edit the httpd.conf file and add or set the value of AllowOverride to None.\n\n")
 
     def pid_file_secure_errmsg(self, result):
-        self.log.write("SV-33222r1_rule: ")
-        self.log.write("The process ID (PID) file must be properly secured.\n\n")
-        self.log.write("To fix: ")
-        self.log.write("Modify the location, permissions, and/or ownership for the PID file folder.\n\n")
+        if result == 0:
+            self.log.write("SV-33222r1_rule: ")
+            self.log.write("The process ID (PID) file must be properly secured.\n\n")
+            self.log.write("To fix: ")
+            self.log.write("Modify the location, permissions, and/or ownership for the PID file folder.\n\n")
