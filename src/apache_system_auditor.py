@@ -36,7 +36,8 @@ class ApacheSystemAuditor:
         self.version_sep_token = None
 
     def audit(self):
-        """Run checks system configuartion files and settings for compliance and
+        """
+        Run checks system configuartion files and settings for compliance and
         report all misconfiguartions using the ApacheSystemLogger.
         """
         self.get_os_info()

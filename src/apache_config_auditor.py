@@ -10,8 +10,8 @@ END_DIRECTORY = "</Directory>"
 
 
 class ApacheConfigAuditor:
-
-    """ApacheConfigAuditor checks the directive_list for all STIG requirements
+    """
+    ApacheConfigAuditor checks the directive_list for all STIG requirements
     that involve single or multiline directives from the main Apache
     configuration file on the server.
     """
@@ -21,8 +21,11 @@ class ApacheConfigAuditor:
 
 
     def audit(self):
-        """Run checks of the apache configuartion file for compliance and
+        """
+        Run checks of the apache configuartion file for compliance and
         report all misconfiguartions using the ApacheConfigLogger.
+
+        :returns: bool -- filename of the log file
         """
         logger = ApacheConfigLogger()
         result = self.ssi_disabled()
@@ -98,7 +101,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         option_exists = False
         ssi_option_disabled = False
         options_set_none = True
@@ -237,7 +239,6 @@ class ApacheConfigAuditor:
         in a designated directory with appropriate permissions.
 
         Finding ID: V-13731
-
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
@@ -672,7 +673,7 @@ class ApacheConfigAuditor:
         criteria are met.
 
         :param address: The address to check for criteria
-        :type address: bool 
+        :type address: string 
         :returns: bool -- True if criteria is met, False otherwise
         """
         if "[" in address: # Ipv6

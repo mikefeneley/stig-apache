@@ -3,6 +3,10 @@
 DEFAULT_CONFIG = "ApacheSystemLog.txt"
 
 class ApacheSystemLogger:
+    """
+    ApacheSystemLogger writes error messages to the JRE log file
+    for apache system rule in the Apache STIG that is violated
+    """
     def __init__(self, filename=DEFAULT_CONFIG):
         self.filename = filename
         self.log = open(filename, 'w')
