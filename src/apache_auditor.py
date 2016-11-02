@@ -2,7 +2,6 @@
 
 DEFAULT = "/etc/apache2/apache2.conf"
 
-
 from apache_parser import ApacheParser
 from apache_config_auditor import ApacheConfigAuditor
 from apache_system_auditor import ApacheSystemAuditor
