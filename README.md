@@ -1,4 +1,4 @@
-Update 11/13/2016:
+<b>Update 11/13/2016:</b>
 
 STIG-Apache was originally intended to be a vulnerability checker that checked apache configuration against the recommendations of the STIG guides provided by the DISA. The STIG-Apache used Python implementations of each individual STIG guide to check against the STIG requirements.
 
