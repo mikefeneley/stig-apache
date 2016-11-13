@@ -25,7 +25,6 @@ HOLDER = "holder.txt"
 
 
 class ApacheSystemAuditor:
-
     """
     System auditor checks all system requirements outside of
     apache config documents to make sure the server is in compliance
@@ -115,12 +114,10 @@ class ApacheSystemAuditor:
         else:
             self.version_sep_token = None  # Only using Ubuntu now
 
-###########################################
-
     def is_supported(self):
-        """Check SV-36441r2_rule: Web server software must be a vendor-supported
+        """
+        Check SV-36441r2_rule: Web server software must be a vendor-supported
         version.
-
 
         Finding ID: V-2246
 
@@ -170,7 +167,8 @@ class ApacheSystemAuditor:
             pass
 
     def version_meets_requirements(self, installed_version):
-        """ Check that the installed version is greater than or equal
+        """
+        Check that the installed version is greater than or equal
         to 2.2.31.
         """
 
@@ -190,9 +188,6 @@ class ApacheSystemAuditor:
         if(int(third) < 31):
             return Falses
         return True
-
-
-##########################
 
     def is_clean_production_server(self):
         """
@@ -240,7 +235,8 @@ class ApacheSystemAuditor:
         return True
 
     def user_access_restricted(self):
-        """Check SV-36456r2_rule: Administrators must be the only users
+        """
+        Check SV-36456r2_rule: Administrators must be the only users
         allowed access to the directory tree, the shell, or other
         operating system functions and utilities.
 
@@ -262,17 +258,14 @@ class ApacheSystemAuditor:
 
         return False
 
-#######################################################################
-
     def meets_compiler_restriction(self):
-        """Check SV-32956r3_rule: Installation of a compiler on 
+        """
+        Check SV-32956r3_rule: Installation of a compiler on
         production web server is prohibited.
 
-        
+        Finding ID: V-2236
 
-        Finding ID: V-2236  
-
-        Verify that no compilers are installed on the system unless 
+        Verify that no compilers are installed on the system unless
         documented and restricted to administrator use.
         """
         exists = self.compiler_exists()
@@ -285,27 +278,26 @@ class ApacheSystemAuditor:
 
         return meets_restriction
 
-
     def compiler_exists(self):
-        """Checks the package manager to see if any programs 
+        """
+        Checks the package manager to see if any programs
         with keyword 'compiler' are installed on the system.
-        Currently only checks using dpkg. 
+        Currently only checks using dpkg.
 
         TODO:
             Add support for Red Hat Linux with yum package manager
             Use better technique to check for compilers.
-
         """
 
         print(self.os)
         if(self.os == "Ubuntu"):
             compiler_info = open(COMPILER_FILENAME, "w")
-            p1 = subprocess.Popen(["dpkg", "--list"], 
-                stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(["grep", "compiler"], 
-                stdin=p1.stdout, stdout=subprocess.PIPE)
+            p1 = subprocess.Popen(["dpkg", "--list"],
+                                  stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["grep", "compiler"],
+                                  stdin=p1.stdout, stdout=subprocess.PIPE)
             p1.stdout.close()
-            output,err = p2.communicate()
+            output, err = p2.communicate()
             compiler_info.write(output)
             compiler_info.close()
 
@@ -314,7 +306,7 @@ class ApacheSystemAuditor:
                 if line is not None:
                     compiler_info.close()
                     call(["rm", COMPILER_FILENAME])
-                    return True 
+                    return True
 
             compiler_info.close()
             call(["rm", COMPILER_FILENAME])
@@ -324,39 +316,37 @@ class ApacheSystemAuditor:
             pass
 
     def compiler_allowed(self):
-        """Check if compiiler on production server is DOD approved
+        """
+        Check if compiiler on production server is DOD approved
         and meets user access restriction requirements.
         """
         return False
 
-############################################
     def minmium_file_permissions_set(self):
         return False
 
-
-############################################
     def cgi_files_monitored(self):
-        """Check SV-32927r2_rule: Monitoring software must include CGI
+        """
+        Check SV-32927r2_rule: Monitoring software must include CGI
         or equivalent programs in its scope.
 
         Finding ID: V-2271
 
-        CGI or equivalent files must be monitored by a 
+        CGI or equivalent files must be monitored by a
         security tool that reports unauthorized changes.
 
-        Query the system for a tool that monitors CGI files. 
+        Query the system for a tool that monitors CGI files.
         Example FileTypes: .cgi, .asp, .aspx, .class, .vb, .php, .pl, and .c
         """
 
         return False
 
-
-############################################
     def webserver_mod_disabled(self):
-        """Check SV-33218r1_rule: Web server status 
+        """
+        Check SV-33218r1_rule: Web server status
         module must be disabled.
 
-        Finding ID: V-26294  
+        Finding ID: V-26294
         """
         module_info = open(MODULE_FILENAME, "w")
         call(["apachectl", "-M", ], stdout=module_info)
@@ -375,10 +365,9 @@ class ApacheSystemAuditor:
                 return False
         return True
 
-
-############################################
     def password_file_permissions_set(self):
-        """Check SV-32927r2_rule: The web server’s htpasswd files 
+        """
+        Check SV-32927r2_rule: The web server’s htpasswd files
         (if present) must reflect proper ownership and permissions
 
         Finding ID: V-2255
@@ -406,55 +395,49 @@ class ApacheSystemAuditor:
         call(["rm", PASSWORD_FILENAME])
         return True
 
-############################################asdasdadsadAAAAAAAÂ
     def server_not_proxy(self):
-        """Check SV-33220r1_rule: The web server must not be 
+        """
+        Check SV-33220r1_rule: The web server must not be
         configured as a proxy server.
 
-        Finding ID: V-26299 
+        Finding ID: V-26299
         """
 
         return False
 
-############################################
     def server_segregated(self):
-        """Check SV-32950r1_rule: The web server must be 
+        """
+        Check SV-32950r1_rule: The web server must be
         segregated from other services.
 
         Finding ID: V-6577
         """
         return False
 
-############################################
     def server_segregated(self):
-        """Check SV-32950r1_rule: The web server must be 
+        """Check SV-32950r1_rule: The web server must be
         segregated from other services.
 
         Finding ID: V-6577
         """
         return False
 
-
-
-
-############################################
     def inbound_email_restricted(self):
-        """Check SV-32937r1_rule: A public web server must 
+        """Check SV-32937r1_rule: A public web server must
         limit email to outbound only.
 
         Finding ID: V-2261 UNFINSHED
-        """
-#        telnet_info = open(TELNET_FILENAME, "w")
-#        code = call(["telnet", "google.com", "25"], stdout=telnet_info)
-#        telnet_info.close()
-#        call(["rm", TELNET_FILENAME])
-
+        """        
+        telnet_info = open(TELNET_FILENAME, "w")
+        code = call(["telnet", "google.com", "25"], stdout=telnet_info)
+        telnet_info.close()
+        call(["rm", TELNET_FILENAME])
 
         return False
 
-############################################
     def user_directories_restricted(self):
-        """Check SV-33221r1_rule: User specific directories
+        """
+        Check SV-33221r1_rule: User specific directories
         must not be globally enabled.
 
         Finding ID: V-26302
@@ -471,89 +454,89 @@ class ApacheSystemAuditor:
         holder.close()
         return disabled
 
-############################################
+
     def software_updated(self):
-        """Check SV-32969r2_rule: The Web site software used with the 
-        web server must have all applicable security patches 
+        """
+        Check SV-32969r2_rule: The Web site software used with the
+        web server must have all applicable security patches
         applied and documented.
 
         Finding ID: V-13613
         """
         return False
 
-############################################
     def server_isolated(self):
-        """Check SV-32932r2_rule: A public web server, if 
-        hosted on the NIPRNet, must be isolated in an accredited 
+        """
+        Check SV-32932r2_rule: A public web server, if
+        hosted on the NIPRNet, must be isolated in an accredited
         DoD DMZ Extension.
 
         Finding ID: V-2242
         """
         return False
 
-
-############################################
     def certificates_validated(self):
-        """Check SV-32954r2_rule: The private web server must use an
+        """
+        Check SV-32954r2_rule: The private web server must use an
         approved DoD certificate validation process.
 
-        Finding ID: V-13672 
+        Finding ID: V-13672
         """
         return False
 
-############################################
     def modules_minimized(self):
-        """Check SV-33215r1_rule: Active software modules 
+        """
+        Check SV-33215r1_rule: Active software modules
         must be minimized.
 
-        Finding ID: V-26285 
+        Finding ID: V-26285
         """
         return False
 
-############################################
     def webdav_disabeld(self):
-        """Check SV-33216r1_rule: Web Distributed Authoring 
+        """
+        Check SV-33216r1_rule: Web Distributed Authoring
         and Versioning (WebDAV) must be disabled.
 
         Finding ID: V-26287
         """
         return False
 
-############################################
     def export_ciphers_removed(self):
-        """Check SV-75159r1_rule: The web server must remove all 
+        """
+        Check SV-75159r1_rule: The web server must remove all
         export ciphers from the cipher suite.
 
-        Finding ID: V-60707 
+        Finding ID: V-60707
         """
         return False
 
-############################################
     def admin_tools_restricted(self):
-        """Check SV-32948r2_rule: Web administration tools must be 
-        restricted to the web manager and the web manager’s 
+        """
+        Check SV-32948r2_rule: Web administration tools must be
+        restricted to the web manager and the web manager’s
         designees.
 
-        Finding ID: V-2248  
+        Finding ID: V-2248
         """
         return False
 
-############################################
     def scoreboard_file_secured(self):
-        """Check SV-33223r1_rule: The score board file must be 
+        """
+        Check SV-33223r1_rule: The score board file must be
         properly secured.
 
-        Finding ID: V-26322 
+        Finding ID: V-26322
         """
         return False
 
-############################################
     def directory_indexing_disabled(self):
-        """Check SV-33219r1_rule: Automatic directory indexing must be 
+        """
+        Check SV-33219r1_rule: Automatic directory indexing must be
         disabled.
 
 
-        Finding ID: V-26368 
+        Finding ID: V-26368
         """
         holder = open(HOLDER, "w")
         call(["apachectl", "-M"], stdout=holder)
@@ -567,47 +550,47 @@ class ApacheSystemAuditor:
         holder.close()
         return disabled
 
-############################################
     def url_pathname_set(self):
-        """Check SV-33229r1_rule: The URL-path name must be set to 
+        """
+        heck SV-33229r1_rule: The URL-path name must be set to
         the file path name or the directory path name.
 
         Finding ID: V-26327
         """
         return False
 
-############################################
     def backup_process_set(self):
-        """Check SV-32964r2_rule: Web server content and 
+        """
+        Check SV-32964r2_rule: Web server content and
         configuration files must be part of a routine backup program.
 
         Finding ID: V-6485
         """
         return False
 
-############################################
     def backup_scripts_removed(self):
-        """Check SV-6930r1_rule: Backup interactive scripts
+        """
+        Check SV-6930r1_rule: Backup interactive scripts
          on the production web server are prohibited.
 
         Finding ID: V-2230
         """
         return False
 
-############################################        
     def utility_programs_removed(self):
-        """Check SV-32955r2_rule: All utility programs, not necessary for 
-        operations, must be removed or disabled.    
+        """
+        Check SV-32955r2_rule: All utility programs, not necessary for
+        operations, must be removed or disabled.
 
         Finding ID: V-2251
         """
         return False
 
-############################################  
     def users_documented(self):
-        """Check SV-32951r1_rule: Administrative users and groups 
+        """
+        Check SV-32951r1_rule: Administrative users and groups
         that have access rights to the web server must be documented.
-   
+
         Finding ID: V-2257
         """
         return False

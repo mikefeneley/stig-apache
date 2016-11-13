@@ -11,7 +11,6 @@ class ApacheParser:
     ApacheConfParser is used to tokenize config files and couple them
     with relevant information such as file and line number
     """
-
     def __init__(self, server_root=SERVER_ROOT):
         self.server_root = server_root
 
@@ -30,7 +29,6 @@ class ApacheParser:
         :type parse_object: string
         :return: a list of directives in the parse_object. 0 is unsuccessful
         """
-
         directives_list = []
 
         # Return list of directives contained in files located in
@@ -74,7 +72,6 @@ class ApacheParser:
         :type conf_filename: string
         :return: list of directives
         """
-
         directive_list = self.load_config(conf_filename)
         directive_list = self.combine_multiline(directive_list)
         directive_list = self.tokenize_directives(
@@ -122,7 +119,7 @@ class ApacheParser:
         """
         Parse a list of directives and remove all tabs, newline characters
         and comments.
-        
+
         :param config_list: the configuration list to parse
         :type config_list: list
         :param conf_filename: Name of the configuration file.
@@ -149,7 +146,7 @@ class ApacheParser:
 
 
 class DirectiveInfo:
-    """ 
+    """
     Directive info holds directive as well as information useful
     or recomendation reporting such as filenames and line numbers
     """

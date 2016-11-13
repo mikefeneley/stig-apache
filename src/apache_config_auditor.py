@@ -15,21 +15,22 @@ class ApacheConfigAuditor:
     that involve single or multiline directives from the main Apache
     configuration file on the server.
     """
-
     def __init__(self, directive_list=None):
         self.directive_list = directive_list
-
 
     def audit(self):
         """
         Run checks of the apache configuartion file for compliance and
         report all misconfiguartions using the ApacheConfigLogger.
 
-        :returns: bool -- filename of the log file
+        :returns: string -- filename of the log file
         """
+        if self.directive_list == 0:
+            return 0
+
         logger = ApacheConfigLogger()
         result = self.ssi_disabled()
-        logger.ssi_disabled_errmsg(result)     
+        logger.ssi_disabled_errmsg(result)
         result = self.http_header_field_limited()
         logger.http_header_field_limited_errmsg(result)
         result = self.http_line_limited()
@@ -78,11 +79,15 @@ class ApacheConfigAuditor:
         logger.pid_file_secure_errmsg(result)
         filename = logger.get_filename()
         del logger
+
+        print(filename)
+
         return filename
-        
-#######################################################################
+
+#
     def ssi_disabled(self):
-        """Check SV-32753r1_rule: Server side includes (SSIs) must run 
+        """
+        Check SV-32753r1_rule: Server side includes (SSIs) must run
         with execution capability disabled.
 
         Finding ID: V-13733
@@ -127,9 +132,10 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-############################################
+#
     def http_header_field_limited(self):
-        """Check SV-32766r2_rule: The HTTP request header field size 
+        """
+        Check SV-32766r2_rule: The HTTP request header field size
         must be limited.
 
         Finding ID: V-13738
@@ -144,7 +150,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         directive_exists = False
         correct_value = False
 
@@ -164,9 +169,10 @@ class ApacheConfigAuditor:
         return limited
 
 
-############################################
+#
     def http_line_limited(self):
-        """Check SV-32768r2_rule: The HTTP request line must be limited.
+        """
+        Check SV-32768r2_rule: The HTTP request line must be limited.
 
         Finding ID: V-13739
 
@@ -197,9 +203,10 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-############################################
+#
     def maxclients_set(self):
-        """Check SV-36649r2_rule: The MaxClients directive 
+        """
+        Check SV-36649r2_rule: The MaxClients directive
         must be set properly.
 
         Finding ID: V-13730
@@ -233,21 +240,23 @@ class ApacheConfigAuditor:
         return correct
 
 
-############################################
+#
     def interactive_programs_set(self):
-        """Check SV-32763r1_rule: All interactive programs must be placed 
+        """
+        Check SV-32763r1_rule: All interactive programs must be placed
         in a designated directory with appropriate permissions.
 
         Finding ID: V-13731
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
+        pass
 
 
-
-############################################
+#
     def symlinks_disabled(self):
-        """Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.
+        """
+        Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.
 
         Finding ID: V-13732
 
@@ -261,7 +270,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-        
         option_exists = False
         symlinks_option_disabled = False
         options_set_none = True
@@ -284,9 +292,10 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-############################################
+#
     def multiviews_disabled(self):
-        """Check SV-32754r1_rule: The MultiViews directive must be disabled.
+        """
+        Check SV-32754r1_rule: The MultiViews directive must be disabled.
 
         Finding ID: V-13734
 
@@ -324,9 +333,10 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-############################################
+#
     def indexing_disabled(self):
-        """Check SV-32755r1_rule: Directory indexing must be disabled on
+        """
+        Check SV-32755r1_rule: Directory indexing must be disabled on
         directories not containing index files.
 
         Finding ID: V-13735
@@ -343,7 +353,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         option_exists = False
         indexing_option_disabled = False
         options_set_none = True
@@ -366,9 +375,10 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-############################################
+#
     def http_message_limited(self):
-        """Check SV-32756r1_rule: The HTTP request message body size must be limited.
+        """
+        Check SV-32756r1_rule: The HTTP request message body size must be limited.
 
         Finding ID: V-13736
 
@@ -378,7 +388,7 @@ class ApacheConfigAuditor:
 
         - If the value of LimitRequestBody is not set to 1 or greater or
           does not exist, this is a finding.
-        
+
         :returns: bool -- True if rule is satisfied, False otherwise
         """
         correct_value = False
@@ -395,9 +405,10 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-############################################
+#
     def http_header_limited(self):
-        """Check SV-32757r1_rule: The HTTP request header fields must be limited.
+        """
+        Check SV-32757r1_rule: The HTTP request header fields must be limited.
 
         Finding ID: V-13737
 
@@ -410,7 +421,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         correct_value = False
         for directive in self.directive_list:
                 directive_start = directive.get_directive()
@@ -426,22 +436,22 @@ class ApacheConfigAuditor:
         return limited
 
 
-############################################
+#
     def request_methods_limited(self):
-        """Check SV-33236r1_rule: HTTP request methods must be limited.
+        """
+        Check SV-33236r1_rule: HTTP request methods must be limited.
 
         Finding ID: V-26396
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-        pass    
+        pass
 
 
-
-
-############################################
+#
     def minspareservers_set(self):
-        """Check SV-36646r2_rule: The httpd.conf MinSpareServers
+        """
+        Check SV-36646r2_rule: The httpd.conf MinSpareServers
         directive must be set properly.
 
         Finding ID: V-13728
@@ -458,7 +468,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
@@ -475,9 +484,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def startservers_set(self):
-        """Check SV-36645r2_rule: The httpd.conf StartServers
+        """
+        Check SV-36645r2_rule: The httpd.conf StartServers
         directive must be set properly.
 
         Finding ID: V-13727
@@ -494,7 +504,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
@@ -512,9 +521,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def keepalivetimeout_set(self):
-        """Check SV-32877r1_rule: The KeepAliveTimeout directive must be defined.
+        """
+        Check SV-32877r1_rule: The KeepAliveTimeout directive must be defined.
 
         Finding ID: V-13726
 
@@ -530,7 +540,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         directive_exists = False
         correct_value = False
         for directive in self.directive_list:
@@ -547,9 +556,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def keepalive_set(self):
-        """Check SV-32844r2_rule: The KeepAlive directive must be enabled.
+        """
+        Check SV-32844r2_rule: The KeepAlive directive must be enabled.
 
         Finding ID: V-13725
 
@@ -558,10 +568,9 @@ class ApacheConfigAuditor:
         KeepAlive
 
         - Verify the Value of KeepAlive is set to On, If not, it is a finding
-        
-        :returns: bool -- True if rule is satisfied, False otherwise        
-        """
 
+        :returns: bool -- True if rule is satisfied, False otherwise
+        """
         correct_value = False
         for directive in self.directive_list:
             directive_start = directive.get_directive()
@@ -576,9 +585,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def timeout_set(self):
-        """Check SV-32977r1_rule: The Timeout directive must be properly set.
+        """
+        Check SV-32977r1_rule: The Timeout directive must be properly set.
 
         Finding ID: V-13724
 
@@ -608,9 +618,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def maxspareservers_set(self):
-        """Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
+        """
+        Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
 
         Finding ID: V-13729
 
@@ -639,9 +650,10 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-############################################
+#
     def ports_configured(self):
-        """Check SV-33228r1_rule: The web server must be configured to
+        """
+        Check SV-33228r1_rule: The web server must be configured to
         listen on a specific IP address and port.
 
         Finding ID: V-26326
@@ -666,30 +678,31 @@ class ApacheConfigAuditor:
             return True
 
 
-############################################
+#
     def is_valid_address(self, address):
-        """ A valid apache address is one that has both an ip address that is
+        """
+        A valid apache address is one that has both an ip address that is
         not all zeros and a port number. Function checks if both of these
         criteria are met.
 
         :param address: The address to check for criteria
-        :type address: string 
+        :type address: string
         :returns: bool -- True if criteria is met, False otherwise
         """
-        if "[" in address: # Ipv6
+        if "[" in address:  # Ipv6
 
-            if "]:" not in address: # Check for port
+            if "]:" not in address:  # Check for port
                 return False
             start = address.find("[")
             end = address.find("]")
-            ipv6_address = address[start + 1 : end]
+            ipv6_address = address[start + 1: end]
 
             address_nonzero = False
             for character in ipv6_address:
                 if(character.isdigit() and character != "0"):
                     address_nonzero = True
             return address_nonzero
-        else:  #ipv4
+        else:  # ipv4
             if "0.0.0.0" in address:    # Check all zero ipv4 address
                 return False
             if ":" not in address:
@@ -697,9 +710,10 @@ class ApacheConfigAuditor:
             return True
 
 
-############################################
+#
     def mime_types_disabled(self):
-        """Check SV-36309r2_rule: MIME types for csh or sh shell 
+        """
+        Check SV-36309r2_rule: MIME types for csh or sh shell
         programs must be disabled.
 
 
@@ -709,9 +723,10 @@ class ApacheConfigAuditor:
         """
         pass
 
-############################################
+#
     def root_denied(self):
-        """Check SV-33226r1_rule: The web server must be configured to 
+        """
+        Check SV-33226r1_rule: The web server must be configured to
         explicitly deny access to the OS root.
 
         Finding ID: V-26323
@@ -720,9 +735,10 @@ class ApacheConfigAuditor:
         """
         pass
 
-############################################
+#
     def url_name_set(self):
-        """Check SV-33229r1_rule: The web server must be configured to 
+        """
+        Check SV-33229r1_rule: The web server must be configured to
         explicitly deny access to the OS root.
 
         Finding ID: V-26327
@@ -731,9 +747,10 @@ class ApacheConfigAuditor:
         """
         pass
 
-############################################
+#
     def trace_disabled(self):
-        """Check SV-33227r1_rule: The TRACE method must be disabled.
+        """
+        Check SV-33227r1_rule: The TRACE method must be disabled.
 
         Finding ID: V-26325
 
@@ -758,9 +775,10 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-############################################
+#
     def override_denied(self):
-        """Check SV-33232r1_rule: The ability to override the access
+        """
+        Check SV-33232r1_rule: The ability to override the access
         configuration for the OS root directory must be disabled.
 
         Finding ID: V-26393
@@ -776,7 +794,6 @@ class ApacheConfigAuditor:
 
         :returns: bool -- True if rule is satisfied, False otherwise
         """
-
         root_exists = False
         option_exists = False
         option_correct = False
@@ -808,10 +825,9 @@ class ApacheConfigAuditor:
             i += 1
         return option_exists and option_correct and root_exists
 
-
-
     def get_directory_list(self, current_index):
-        """ Currently does not work if directive list
+        """
+        Currently does not work if directive list
         is empty.
         """
 
@@ -840,27 +856,27 @@ class ApacheConfigAuditor:
         else:
             return False
 
-############################################
+#
     def pid_file_secure(self):
-        """Check SV-33222r1_rule: The process ID (PID) 
+        """
+        Check SV-33222r1_rule: The process ID (PID)
         file must be properly secured.
 
-        Finding ID: V-26305 
+        Finding ID: V-26305
         """
         return False
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     test_list = []
-    line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')           
+    line = DirectiveInfo(DirectiveLine("<Directory", ["/>"]), 0, 'file.txt')
     test_list.append(line)
-    line = DirectiveInfo(DirectiveLine("AllowOverride", ["None"]), 0, 'file.txt')           
+    line = DirectiveInfo(
+        DirectiveLine("AllowOverride", ["None"]), 0, 'file.txt')
     test_list.append(line)
-    line = DirectiveInfo(DirectiveLine("</Directory>", [""]), 0, 'file.txt')           
+    line = DirectiveInfo(DirectiveLine("</Directory>", [""]), 0, 'file.txt')
     test_list.append(line)
 
     auditor = ApacheConfigAuditor(test_list)
 
     print(auditor.override_denied())
-
-
