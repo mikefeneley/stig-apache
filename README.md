@@ -9,10 +9,7 @@ Because the approach used to start this project is outdated and the correct appr
 If you are interested in working on this project with me, I may be interested if you can provide a good reason to do. If so, please contact me here: mfeneley@vt.edu.
 
 
-
-Prev
-
-#################################################################
+<b>#################################################################</b>
 
 The idea behind this project is to create a tool which checks if a
 server with Apache v 2.2 is configured to meet the requirements of the 
