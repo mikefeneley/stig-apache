@@ -150,7 +150,6 @@ class DirectiveInfo:
     Directive info holds directive as well as information useful
     or recomendation reporting such as filenames and line numbers
     """
-
     def __init__(self, directive_line, line_num, filename):
         self.directive_line = directive_line
         self.line_num = line_num

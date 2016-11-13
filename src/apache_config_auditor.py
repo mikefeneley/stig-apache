@@ -80,11 +80,8 @@ class ApacheConfigAuditor:
         filename = logger.get_filename()
         del logger
 
-        print(filename)
-
         return filename
 
-#
     def ssi_disabled(self):
         """
         Check SV-32753r1_rule: Server side includes (SSIs) must run
@@ -132,7 +129,6 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-#
     def http_header_field_limited(self):
         """
         Check SV-32766r2_rule: The HTTP request header field size
@@ -168,8 +164,6 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-
-#
     def http_line_limited(self):
         """
         Check SV-32768r2_rule: The HTTP request line must be limited.
@@ -203,7 +197,6 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-#
     def maxclients_set(self):
         """
         Check SV-36649r2_rule: The MaxClients directive
@@ -239,8 +232,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-
-#
     def interactive_programs_set(self):
         """
         Check SV-32763r1_rule: All interactive programs must be placed
@@ -252,8 +243,6 @@ class ApacheConfigAuditor:
         """
         pass
 
-
-#
     def symlinks_disabled(self):
         """
         Check SV-40129r1_rule: The "–FollowSymLinks” setting must be disabled.
@@ -292,7 +281,6 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-#
     def multiviews_disabled(self):
         """
         Check SV-32754r1_rule: The MultiViews directive must be disabled.
@@ -333,7 +321,6 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-#
     def indexing_disabled(self):
         """
         Check SV-32755r1_rule: Directory indexing must be disabled on
@@ -375,7 +362,6 @@ class ApacheConfigAuditor:
             disabled = False
         return disabled
 
-#
     def http_message_limited(self):
         """
         Check SV-32756r1_rule: The HTTP request message body size must be limited.
@@ -405,7 +391,6 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-#
     def http_header_limited(self):
         """
         Check SV-32757r1_rule: The HTTP request header fields must be limited.
@@ -435,8 +420,6 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-
-#
     def request_methods_limited(self):
         """
         Check SV-33236r1_rule: HTTP request methods must be limited.
@@ -447,8 +430,6 @@ class ApacheConfigAuditor:
         """
         pass
 
-
-#
     def minspareservers_set(self):
         """
         Check SV-36646r2_rule: The httpd.conf MinSpareServers
@@ -484,7 +465,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def startservers_set(self):
         """
         Check SV-36645r2_rule: The httpd.conf StartServers
@@ -521,7 +501,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def keepalivetimeout_set(self):
         """
         Check SV-32877r1_rule: The KeepAliveTimeout directive must be defined.
@@ -556,7 +535,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def keepalive_set(self):
         """
         Check SV-32844r2_rule: The KeepAlive directive must be enabled.
@@ -585,7 +563,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def timeout_set(self):
         """
         Check SV-32977r1_rule: The Timeout directive must be properly set.
@@ -618,7 +595,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def maxspareservers_set(self):
         """
         Check SV-36648r2_rule: The MaxSpareServers directive must be set properly.
@@ -650,7 +626,6 @@ class ApacheConfigAuditor:
             correct = False
         return correct
 
-#
     def ports_configured(self):
         """
         Check SV-33228r1_rule: The web server must be configured to
@@ -677,8 +652,6 @@ class ApacheConfigAuditor:
         else:
             return True
 
-
-#
     def is_valid_address(self, address):
         """
         A valid apache address is one that has both an ip address that is
@@ -709,8 +682,6 @@ class ApacheConfigAuditor:
                 return False
             return True
 
-
-#
     def mime_types_disabled(self):
         """
         Check SV-36309r2_rule: MIME types for csh or sh shell
@@ -723,7 +694,6 @@ class ApacheConfigAuditor:
         """
         pass
 
-#
     def root_denied(self):
         """
         Check SV-33226r1_rule: The web server must be configured to
@@ -735,7 +705,6 @@ class ApacheConfigAuditor:
         """
         pass
 
-#
     def url_name_set(self):
         """
         Check SV-33229r1_rule: The web server must be configured to
@@ -747,7 +716,6 @@ class ApacheConfigAuditor:
         """
         pass
 
-#
     def trace_disabled(self):
         """
         Check SV-33227r1_rule: The TRACE method must be disabled.
@@ -775,7 +743,6 @@ class ApacheConfigAuditor:
             limited = False
         return limited
 
-#
     def override_denied(self):
         """
         Check SV-33232r1_rule: The ability to override the access
@@ -856,7 +823,6 @@ class ApacheConfigAuditor:
         else:
             return False
 
-#
     def pid_file_secure(self):
         """
         Check SV-33222r1_rule: The process ID (PID)

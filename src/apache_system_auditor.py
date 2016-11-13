@@ -255,7 +255,6 @@ class ApacheSystemAuditor:
         - If undocumented access to shell scripts or operating system
           functions is found, this is a finding.
         """
-
         return False
 
     def meets_compiler_restriction(self):
@@ -534,7 +533,6 @@ class ApacheSystemAuditor:
         """
         Check SV-33219r1_rule: Automatic directory indexing must be
         disabled.
-
 
         Finding ID: V-26368
         """

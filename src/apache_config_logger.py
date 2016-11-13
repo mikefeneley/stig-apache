@@ -6,7 +6,6 @@ class ApacheConfigLogger:
     """ApacheConfigLogger writes error messages to the JRE log file
     for every rule in the JRE STIG that is violated.
     """
-
     def __init__(self, filename="ApacheConfigLog.txt"):
         self.filename = filename
         self.log = open(filename, 'w')
