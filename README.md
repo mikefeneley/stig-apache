@@ -67,3 +67,9 @@ SV-33228r1_rule, V-26326
 SV-33227r1_rule, V-26325
 
 SV-33232r1_rule, V-26393
+
+<b>Using the Program</b>
+
+The program can be run using the command line. Navigate to the src folder after downloading and execute program with the following command:
+
+<i>python apache_auditor.py</i>
