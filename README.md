@@ -11,6 +11,8 @@ If you are interested in working on this project with me, I may be interested if
 
 <b>#################################################################</b>
 
+<b>Introduction</b>
+
 The idea behind this project is to create a tool which checks if a
 server with Apachev2.2 is configured to meet the requirements of the 
 DISA STIG guide for Apache. 
