@@ -8,6 +8,11 @@ Because the approach used to start this project is outdated and the correct appr
 
 If you are interested in working on this project with me, I may be interested if you can provide a good reason to do. If so, please contact me here: mfeneley@vt.edu.
 
+<b>Update 11/26/2016:</b>
+
+Initially this tool was originally intended to just check and report misconfiguations back to the user. However, adding the option to change or add configurations to make the system STIG compliant might help this tool stand out from many of the other STIG tools avaliable.
+
+I am still going to work on extending the number of findings that are supported by the STIG Kit, but I also intend to add configuration change functitonality to the program.
 
 <b>#################################################################</b>
 
