@@ -7,7 +7,7 @@ from apache_system_auditor import ApacheSystemAuditor
 DEFAULT_CONFIG = "/etc/apache2/apache2.conf"
 
 
-class ApacheAuditor:
+class ApacheAuditor:    #the class which audits configuration files
 
     def __init__(self):
         self.parser = ApacheParser()
